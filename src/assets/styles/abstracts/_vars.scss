@@ -1,0 +1,65 @@
+/* color-------------------------------------------------------------------------- */
+// main
+$primary-color-gray: #fbfcff;
+$primary-color-light: #8996a9;
+$primary-color: #64748b;
+$primary-color-dark: #334155;
+
+$secondary-color: #a9dfd8;
+// $secondary-color-dark: #6f929b;
+$secondary-color-dark: #7ebbb4;
+
+$third-color: #cf9dca;
+$third-color-dark: #ad79a6;
+$third-color-light: #e5cce3;
+
+// bg
+$background-color: #fdfdfd;
+$background-color-dark: #e8e8e8;
+$background-color-light: #fff;
+
+// text
+$text-color: #555;
+$text-color-light: #888;
+$heading-color: #111;
+$link-color: $primary-color;
+$text-color-muted: #ccc;
+
+$line-height-regular: 1;
+
+// border
+$border-color: #e1e1e1;
+$border-color-text: #dcdfe6;
+$border-color-dark: #aaa;
+$border: 0.15rem solid rgba(0, 0, 0, 0.2);
+$border-width: 0.15rem;
+$border-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+$border-radius: 0.2rem;
+$border-text: 0.15rem solid #dcdfe6;
+/* font -------------------------------------------------------------------------- */
+$font-primary: "Lato", Arial, sans-serif;
+$font-weight-regular: 400;
+$font-weight-bold: 800;
+
+/* z-index -------------------------------------------------------------------------- */
+$z-bottom: 1;
+$z-middle: 2;
+$z-top: 3;
+$z-top-absolute: 99;
+
+/* other colors -------------------------------------------------------------------------- */
+$red: #f4acb7;
+
+/* sidebar -------------------------------------------------------------------------- */
+$sidebar-width: 15rem;
+$icon-size-large: 3.5rem;
+$icon-size-regular: 2.6rem;
+$icon-size-small: 2.4rem;
+$icon-color-gray: #cccccc;
+$avatar-size: $icon-size-regular;
+
+/* vl-related -------------------------------------------------------------------------- */
+$border-width-focus: 5px;
+$point-color: #c69de9;
+$shape-color: #f7a69f;
+$compound-color: #53c4b6;

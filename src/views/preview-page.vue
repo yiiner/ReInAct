@@ -1,0 +1,247 @@
+<template>
+    <div id="container">
+        <div id="left-panel">
+            <h1 style="font-size: 110px">Preview SVG Container</h1>
+            <div id="svg-content"></div>
+            <!-- 返回按钮 -->
+            <button @click="goBack" class="return-button">返回主页</button>
+        </div>
+        <div id="right-panel">
+            <h1 style="font-size: 110px">随机文本</h1>
+            <div>
+                <p>
+                    <span class="sentence" data-node-id="node-17"
+                        >这是第一句话。</span
+                    ><span class="sentence" data-node-id="node-18"
+                        >这是第二句话，包含了一些单词。</span
+                    ><span class="sentence"
+                        >这是第三句话，其中也有一些单词。</span
+                    >
+                    <!-- 继续添加其他句子 -->
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref, onMounted, computed, nextTick } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { PDFGraph } from "@/utils/exporter/treeExporter.js";
+import { getNodeDetail, getVlSpec } from "@/api/panel.js";
+
+const constructTreeData = async (data) => {
+    const nodes = data.nodes;
+    const realIdList = nodes.map((d) => d.realId);
+    const vlSpecListResult = await getVlSpec(realIdList);
+    const vlSpecList = vlSpecListResult.data.vlList;
+    const descriptionPromiseList = realIdList.map((id) => getNodeDetail(id));
+    const nodeDetailResults = await Promise.all(descriptionPromiseList);
+    const descriptionList = nodeDetailResults.map(
+        (res) => res.data.description
+    );
+    const insightNodes = nodes.map((node, index) => ({
+        ...node,
+        description: descriptionList[index],
+        vegaLite: vlSpecList[index],
+    }));
+    return {
+        nodes: insightNodes,
+        links: data.links,
+    };
+};
+
+const route = useRoute();
+const router = useRouter();
+
+const pathData = computed(() => {
+    if (route.query.data) {
+        try {
+            return JSON.parse(route.query.data);
+        } catch (e) {
+            console.error("解析路由数据时出错:", e);
+            return null;
+        }
+    } else {
+        console.error("路由查询中没有数据");
+        return null;
+    }
+});
+
+const goBack = () => {
+    // router.push({ path: "/main" });
+    router.back(-1);
+};
+
+onMounted(async () => {
+    // onMounted(() => {
+    console.log("onMounted 钩子触发");
+    const data = pathData.value;
+    console.log("onMounted 中解析的数据:", data);
+
+    if (!data || typeof data !== "object" || !data.nodes || !data.links) {
+        console.error("无效的数据:", data);
+        return;
+    }
+
+    const containerNode = d3.select("#svg-content").node();
+    if (!containerNode) {
+        console.error("未找到容器节点");
+        return;
+    }
+
+    try {
+        await constructTreeData(data).then((data) => {
+            // constructTreeData(data).then((data) => {
+            const pdfGraph = new PDFGraph(data);
+            console.log("PDFGraph 初始化成功");
+            pdfGraph.createGraph(containerNode);
+            console.log("图表创建成功");
+        });
+    } catch (error) {
+        console.error("创建图表时出错:", error);
+    }
+
+    // 使用 nextTick 确保 DOM 更新后再添加事件监听
+    nextTick();
+
+    const svg = d3.select("#main-svg");
+
+    if (!svg.node()) {
+        console.log("svg is null");
+    }
+
+    console.log("svg: ", svg);
+
+    const nodeList = svg.select(".top-g-node").selectChildren(".node");
+
+    console.log("nodeList:", nodeList);
+
+    // Select all elements with class "sentence"
+    const sentences = d3.selectAll(".sentence");
+
+    console.log("sentences: ", sentences);
+    // Add event listeners for mouseover and mouseout
+    sentences.on("mouseover", handleMouseOver).on("mouseout", handleMouseOut);
+
+    function handleMouseOver(event) {
+        console.log("MouseOver");
+        const sentence = d3.select(event.currentTarget);
+        const nodeId = sentence.attr("data-node-id");
+        console.log(`${nodeId}`);
+        const nodeElement = nodeList.filter((node) => node.data.id === nodeId);
+
+        if (!nodeElement.node()) {
+            nodeElement.classed("highlight-node", true);
+        }
+
+        sentence.classed("highlight", true);
+    }
+
+    function handleMouseOut(event) {
+        const sentence = d3.select(event.currentTarget);
+        const nodeId = sentence.attr("data-node-id");
+        const nodeElement = nodeList.filter((node) => node.data.id === nodeId);
+
+        if (!nodeElement.node()) {
+            nodeElement.classed("highlight-node", true);
+        }
+
+        sentence.classed("highlight", false);
+    }
+
+    // 为句子添加鼠标悬停事件监听
+    // const sentences = document.querySelectorAll(".sentence");
+    // sentences.forEach((sentence) => {
+    //     sentence.addEventListener("mouseover", handleMouseOver);
+    //     sentence.addEventListener("mouseout", handleMouseOut);
+    // });
+
+    //     function handleMouseOver(event) {
+    //         const sentence = event.currentTarget;
+    //         const nodeId = sentence.getAttribute("data-node-id"); // 假设每个句子都有一个data-node-id属性
+    //         const nodeElement = document.getElementById(nodeId);
+    //         if (nodeElement) {
+    //             nodeElement.classList.add("highlight-node");
+    //             // 如果边也需要高亮，可以通过nodeId查找相关边并高亮
+    //         }
+    //         sentence.classList.add("highlight");
+    //     }
+
+    //     function handleMouseOut(event) {
+    //         const sentence = event.currentTarget;
+    //         const nodeId = sentence.getAttribute("data-node-id");
+    //         const nodeElement = document.getElementById(nodeId);
+    //         if (nodeElement) {
+    //             nodeElement.classList.remove("highlight-node");
+    //         }
+    //         sentence.classList.remove("highlight");
+    //     }
+    // });
+    // window.addEventListener("DOMContentLoaded", (event) => {
+    //     const sentences = document.querySelectorAll(".sentence");
+
+    //     sentences.forEach((sentence) => {
+    //         sentence.addEventListener("mouseover", () => {
+    //             sentence.classList.add("highlight");
+    //         });
+
+    //         sentence.addEventListener("mouseout", () => {
+    //             sentence.classList.remove("highlight");
+    //         });
+    //     });
+    // });
+});
+</script>
+
+<style scoped>
+#container {
+    display: flex;
+    margin: 20px;
+}
+
+#left-panel {
+    flex: 1;
+    margin-right: 0px; /* 左右面板之间的空间 */
+}
+
+#right-panel {
+    flex: 1;
+    background-color: #f0f0f0; /* 可选: 添加背景颜色 */
+    padding: 20px; /* 可选: 添加内边距 */
+}
+
+#svg-content {
+    width: 100%;
+    height: auto;
+}
+
+.highlight {
+    background-color: yellow; /* 高亮效果 */
+}
+
+.return-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.return-button:hover {
+    background-color: #0056b3;
+}
+
+.sentence {
+    margin: 40px 0;
+    cursor: pointer;
+    font-size: 100px;
+}
+
+.highlight-node {
+    transform: scale(1.2); /* 放大节点 */
+    stroke-width: 3; /* 增加边框宽度 */
+}
+</style>
