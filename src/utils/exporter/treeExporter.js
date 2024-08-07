@@ -16,13 +16,13 @@ class PDFGraph {
             borderStroke: "#dedede",
             borderR: 10,
             // gap
-            borderGap: 300,
+            borderGap: 600,
             // vega-lite
             vlWidth: 120,
             vlHeight: 120,
             // description
-            descWidth: 180,
-            descHeight: 250,
+            descWidth: 0,
+            descHeight: 0,
             descStrokeWidth: 1.5,
             descBorderR: 6,
             descStroke: "#aaacaf",
@@ -444,29 +444,29 @@ class PDFGraph {
                     });
                     promises.push(promise);
                 });
-                // draw description
-                const descGs = insightNode
-                    .append("g")
-                    .attr("class", "desc-g")
-                    .style(
-                        "transform",
-                        `translate(${
-                            this.defaultConfig.iBorderWidth / 2 + 30
-                        }px, ${30}px)`
-                    );
-                descGs
-                    .append("foreignObject")
-                    .attr("width", this.defaultConfig.descWidth)
-                    .attr("height", this.defaultConfig.descHeight)
-                    .append("xhtml:div")
-                    .style("width", `${this.defaultConfig.descWidth}px`)
-                    .style("height", `${this.defaultConfig.descHeight}px`)
-                    .style("overflow", "auto")
-                    .style("font-size", `${this.defaultConfig.fontSize}px`)
-                    .style("color", this.defaultConfig.textColor)
-                    .style("padding", `${this.defaultConfig.textGap}px`)
-                    .style("box-sizing", "border-box")
-                    .text((d) => d.data.description);
+                // // draw description
+                // const descGs = insightNode
+                //     .append("g")
+                //     .attr("class", "desc-g")
+                //     .style(
+                //         "transform",
+                //         `translate(${
+                //             this.defaultConfig.iBorderWidth / 2 + 30
+                //         }px, ${30}px)`
+                //     );
+                // descGs
+                //     .append("foreignObject")
+                //     .attr("width", this.defaultConfig.descWidth)
+                //     .attr("height", this.defaultConfig.descHeight)
+                //     .append("xhtml:div")
+                //     .style("width", `${this.defaultConfig.descWidth}px`)
+                //     .style("height", `${this.defaultConfig.descHeight}px`)
+                //     .style("overflow", "auto")
+                //     .style("font-size", `${this.defaultConfig.fontSize}px`)
+                //     .style("color", this.defaultConfig.textColor)
+                //     .style("padding", `${this.defaultConfig.textGap}px`)
+                //     .style("box-sizing", "border-box")
+                //     .text((d) => d.data.description);
             });
 
         // create zoom apply it to according svg elements
