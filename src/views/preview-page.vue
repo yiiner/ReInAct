@@ -1,18 +1,18 @@
 <template>
     <div id="container">
         <div id="left-panel">
-            <h1 style="font-size: 110px">Preview SVG Container</h1>
+            <h1>Preview SVG Container</h1>
             <div id="svg-content"></div>
             <!-- 返回按钮 -->
             <button @click="goBack" class="return-button">返回主页</button>
         </div>
         <div id="right-panel">
-            <h1 style="font-size: 110px">随机文本</h1>
+            <h1>随机文本</h1>
             <div>
                 <p>
-                    <span class="sentence" data-node-id="node-17"
+                    <span class="sentence" data-node-id="node-52"
                         >这是第一句话。</span
-                    ><span class="sentence" data-node-id="node-18"
+                    ><span class="sentence" data-node-id="node-53"
                         >这是第二句话，包含了一些单词。</span
                     ><span class="sentence"
                         >这是第三句话，其中也有一些单词。</span
@@ -105,34 +105,42 @@ onMounted(async () => {
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
 
-    const svg = d3.select("#main-svg");
-
-    if (!svg.node()) {
-        console.log("svg is null");
-    }
-
-    console.log("svg: ", svg);
-
-    const nodeList = svg.select(".top-g-node").selectChildren(".node");
-
-    console.log("nodeList:", nodeList);
-
     // Select all elements with class "sentence"
     const sentences = d3.selectAll(".sentence");
 
-    console.log("sentences: ", sentences);
+    // console.log("sentences: ", sentences);
+
     // Add event listeners for mouseover and mouseout
     sentences.on("mouseover", handleMouseOver).on("mouseout", handleMouseOut);
 
     function handleMouseOver(event) {
-        console.log("MouseOver");
+        // console.log("MouseOver");
         const sentence = d3.select(event.currentTarget);
         const nodeId = sentence.attr("data-node-id");
-        console.log(`${nodeId}`);
-        const nodeElement = nodeList.filter((node) => node.data.id === nodeId);
+        const svg = d3.select("#main-svg");
 
-        if (!nodeElement.node()) {
-            nodeElement.classed("highlight-node", true);
+        if (!svg.node()) {
+            console.log("svg is null");
+        }
+
+        // console.log("svg: ", svg);
+
+        const nodeList = svg.select(".top-g-node").selectChildren(".node");
+
+        // console.log("nodeList:", nodeList);
+        // console.log(`${nodeId}`);
+
+        const nodeElement = nodeList.filter((node) => {
+            // console.log(`node: node-${node.data.id}`);
+            return `node-${node.data.id}` === nodeId;
+        });
+
+        console.log("nodeElement: ", nodeElement);
+
+        if (nodeElement.node()) {
+            // nodeElement.classed("highlight-node", true);
+            // nodeElement.style("transform") + " scale(1.1)";
+            toggleHover(nodeElement, true);
         }
 
         sentence.classed("highlight", true);
@@ -141,13 +149,39 @@ onMounted(async () => {
     function handleMouseOut(event) {
         const sentence = d3.select(event.currentTarget);
         const nodeId = sentence.attr("data-node-id");
-        const nodeElement = nodeList.filter((node) => node.data.id === nodeId);
+        const svg = d3.select("#main-svg");
 
-        if (!nodeElement.node()) {
-            nodeElement.classed("highlight-node", true);
+        if (!svg.node()) {
+            console.log("svg is null");
+        }
+
+        // console.log("svg: ", svg);
+
+        const nodeList = svg.select(".top-g-node").selectChildren(".node");
+
+        console.log("nodeList:", nodeList);
+        const nodeElement = nodeList.filter((node) => {
+            return `node-${node.data.id}` === nodeId;
+        });
+
+        if (nodeElement.node()) {
+            // nodeElement.classed("highlight-node", false);
+            // nodeElement.style("transform").split("scale")[0];
+            toggleHover(nodeElement, false);
         }
 
         sentence.classed("highlight", false);
+    }
+
+    function toggleHover(nodeG, state, duration = 200) {
+        let transformStr = "";
+        let scale = 1.1;
+        if (state) {
+            transformStr = nodeG.style("transform") + ` scale(${scale})`;
+        } else {
+            transformStr = nodeG.style("transform").split("scale")[0];
+        }
+        nodeG.transition().duration(duration).style("transform", transformStr);
     }
 
     // 为句子添加鼠标悬停事件监听
@@ -194,7 +228,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #container {
     display: flex;
     margin: 20px;
@@ -237,11 +271,17 @@ onMounted(async () => {
 .sentence {
     margin: 40px 0;
     cursor: pointer;
-    font-size: 100px;
+    /* font-size: 100px; */
 }
 
-.highlight-node {
-    transform: scale(1.2); /* 放大节点 */
-    stroke-width: 3; /* 增加边框宽度 */
+/* .highlight-node {
+    transform: scale(1.2); // 放大节点 
+    } */
+#main-svg {
+    .node {
+        &.highlight-node {
+            transform: scale(1.5);
+        }
+    }
 }
 </style>

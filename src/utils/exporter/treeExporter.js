@@ -7,16 +7,18 @@ class PDFGraph {
             // top borders
             iBorderWidth: 450, // insight
             iBorderHeight: 200,
-            qBorderWidth: 120, // query
-            qBorderHeight: 200,
-            rBorderWidth: 450, // relation
-            rBorderHeight: 60,
+            qBorderWidth: 0, // query
+            qBorderHeight: 0,
+            rBorderWidth: 0, // relation
+            rBorderHeight: 0,
             // top border general
             borderWidth: 3,
             borderStroke: "#dedede",
             borderR: 10,
             // gap
-            borderGap: 600,
+            xborderGap: 50, // x-axis
+            yborderGap: 100, // y-axis
+            borderGap: 50,
             // vega-lite
             vlWidth: 120,
             vlHeight: 120,
@@ -344,76 +346,76 @@ class PDFGraph {
                     (d) => d.data.id !== this.root.data.id
                 );
                 // create relationship bar
-                const relationship = nodeGRich
-                    .append("g")
-                    .attr("class", "relationship")
-                    .style(
-                        "transform",
-                        `translate(${0}px, ${-this.defaultConfig
-                            .rBorderHeight}px)`
-                    );
-                const rBorders = relationship
-                    .append("rect")
-                    .attr("width", this.defaultConfig.rBorderWidth)
-                    .attr("height", this.defaultConfig.rBorderHeight)
-                    .attr("stroke", this.defaultConfig.borderStroke)
-                    .attr("stroke-width", this.defaultConfig.borderWidth)
-                    .attr("rx", this.defaultConfig.borderR)
-                    .attr("fill", "#fff");
-                relationship
-                    .append("foreignObject")
-                    .attr("width", this.defaultConfig.rBorderWidth)
-                    .attr("height", this.defaultConfig.rBorderHeight)
-                    .append("xhtml:div")
-                    .style("width", `${this.defaultConfig.rBorderWidth}px`)
-                    .style("height", `${this.defaultConfig.rBorderHeight}px`)
-                    .style("overflow", "auto")
-                    .style("font-size", `${this.defaultConfig.fontSize}px`)
-                    .style("color", this.defaultConfig.textColor)
-                    .style("padding", `${this.defaultConfig.textGap}px`)
-                    .style("box-sizing", "border-box")
-                    .style("white-space", "pre-wrap")
-                    .text((d) => {
-                        const title = "Relationship:\n";
-                        return title + (d.data.linkInfo.relationship || "null");
-                    });
+                // const relationship = nodeGRich
+                //     .append("g")
+                //     .attr("class", "relationship")
+                //     .style(
+                //         "transform",
+                //         `translate(${0}px, ${-this.defaultConfig
+                //             .rBorderHeight}px)`
+                //     );
+                // const rBorders = relationship
+                //     .append("rect")
+                //     .attr("width", this.defaultConfig.rBorderWidth)
+                //     .attr("height", this.defaultConfig.rBorderHeight)
+                //     .attr("stroke", this.defaultConfig.borderStroke)
+                //     .attr("stroke-width", this.defaultConfig.borderWidth)
+                //     .attr("rx", this.defaultConfig.borderR)
+                //     .attr("fill", "#fff");
+                // relationship
+                //     .append("foreignObject")
+                //     .attr("width", this.defaultConfig.rBorderWidth)
+                //     .attr("height", this.defaultConfig.rBorderHeight)
+                //     .append("xhtml:div")
+                //     .style("width", `${this.defaultConfig.rBorderWidth}px`)
+                //     .style("height", `${this.defaultConfig.rBorderHeight}px`)
+                //     .style("overflow", "auto")
+                //     .style("font-size", `${this.defaultConfig.fontSize}px`)
+                //     .style("color", this.defaultConfig.textColor)
+                //     .style("padding", `${this.defaultConfig.textGap}px`)
+                //     .style("box-sizing", "border-box")
+                //     .style("white-space", "pre-wrap")
+                //     .text((d) => {
+                //         const title = "Relationship:\n";
+                //         return title + (d.data.linkInfo.relationship || "null");
+                //     });
 
-                // create question bar
-                const question = nodeGRich
-                    .append("g")
-                    .attr("class", "question")
-                    .style(
-                        "transform",
-                        `translate(${-this.defaultConfig
-                            .qBorderWidth}px, ${0}px)`
-                    );
+                // // create question bar
+                // const question = nodeGRich
+                //     .append("g")
+                //     .attr("class", "question")
+                //     .style(
+                //         "transform",
+                //         `translate(${-this.defaultConfig
+                //             .qBorderWidth}px, ${0}px)`
+                //     );
 
-                const qBorders = question
-                    .append("rect")
-                    .attr("width", this.defaultConfig.qBorderWidth)
-                    .attr("height", this.defaultConfig.qBorderHeight)
-                    .attr("stroke", this.defaultConfig.borderStroke)
-                    .attr("stroke-width", this.defaultConfig.borderWidth)
-                    .attr("rx", this.defaultConfig.borderR)
-                    .attr("fill", "#fff");
+                // const qBorders = question
+                //     .append("rect")
+                //     .attr("width", this.defaultConfig.qBorderWidth)
+                //     .attr("height", this.defaultConfig.qBorderHeight)
+                //     .attr("stroke", this.defaultConfig.borderStroke)
+                //     .attr("stroke-width", this.defaultConfig.borderWidth)
+                //     .attr("rx", this.defaultConfig.borderR)
+                //     .attr("fill", "#fff");
 
-                question
-                    .append("foreignObject")
-                    .attr("width", this.defaultConfig.qBorderWidth)
-                    .attr("height", this.defaultConfig.qBorderHeight)
-                    .append("xhtml:div")
-                    .style("width", `${this.defaultConfig.qBorderWidth}px`)
-                    .style("height", `${this.defaultConfig.qBorderHeight}px`)
-                    .style("overflow", "auto")
-                    .style("font-size", `${this.defaultConfig.fontSize}px`)
-                    .style("color", this.defaultConfig.textColor)
-                    .style("padding", `${this.defaultConfig.textGap}px`)
-                    .style("box-sizing", "border-box")
-                    .style("white-space", "pre-wrap")
-                    .text((d) => {
-                        const title = "Question:\n";
-                        return title + (d.data.linkInfo.question || "NULL");
-                    });
+                // question
+                //     .append("foreignObject")
+                //     .attr("width", this.defaultConfig.qBorderWidth)
+                //     .attr("height", this.defaultConfig.qBorderHeight)
+                //     .append("xhtml:div")
+                //     .style("width", `${this.defaultConfig.qBorderWidth}px`)
+                //     .style("height", `${this.defaultConfig.qBorderHeight}px`)
+                //     .style("overflow", "auto")
+                //     .style("font-size", `${this.defaultConfig.fontSize}px`)
+                //     .style("color", this.defaultConfig.textColor)
+                //     .style("padding", `${this.defaultConfig.textGap}px`)
+                //     .style("box-sizing", "border-box")
+                //     .style("white-space", "pre-wrap")
+                //     .text((d) => {
+                //         const title = "Question:\n";
+                //         return title + (d.data.linkInfo.question || "NULL");
+                //     });
 
                 const insightNode = nodeGs.append("g").attr("class", "insight");
                 const iBorders = insightNode
@@ -441,6 +443,7 @@ class PDFGraph {
                         }
                     ).then((svg) => {
                         svg.attr("width", self.defaultConfig.iBorderWidth / 2);
+                        // svg.attr("width", self.defaultConfig.iBorderWidth);
                     });
                     promises.push(promise);
                 });
