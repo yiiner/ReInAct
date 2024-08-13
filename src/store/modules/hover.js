@@ -1,24 +1,24 @@
-// represent current foucs node, mainly for filter panel to listen
+// represent current focus node, mainly for filter panel to listen
 export default {
-  namespaced: true,
-  state() {
-    return {
-      id: null, // refer to graph node's id
-    };
-  },
-  getters: {
-    id(state) {
-      return state.id;
+    namespaced: true,
+    state() {
+        return {
+            id: null, // refer to graph node's id
+        };
     },
-  },
-  mutations: {
-    setId(state, payload) {
-      state.id = payload;
+    getters: {
+        id(state) {
+            return state.id;
+        },
     },
-  },
-  actions: {
-    changeId(context, paylaod) {
-      context.commit("setId", paylaod);
+    mutations: {
+        setId(state, payload) {
+            state.id = payload;
+        },
     },
-  },
+    actions: {
+        changeId(context, payload) {
+            context.commit("setId", payload);
+        },
+    },
 };
