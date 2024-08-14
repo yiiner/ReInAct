@@ -10,11 +10,11 @@
             <h1>随机文本</h1>
             <div>
                 <p>
-                    <span class="sentence" data-node-id="node-52"
+                    <span class="sentence" data-node-id="node-16"
                         >这是第一句话。</span
-                    ><span class="sentence" data-node-id="node-53"
+                    ><span class="sentence" data-node-id="node-17"
                         >这是第二句话，包含了一些单词。</span
-                    ><span class="sentence"
+                    ><span class="sentence" data-node-id="node-18"
                         >这是第三句话，其中也有一些单词。</span
                     >
                     <!-- 继续添加其他句子 -->
