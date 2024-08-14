@@ -27,6 +27,7 @@
 <script setup>
 import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
 import { getNodeDetail, getVlSpec } from "@/api/panel.js";
 
@@ -53,11 +54,12 @@ const constructTreeData = async (data) => {
 
 const route = useRoute();
 const router = useRouter();
+const store = useStore();
 
 const pathData = computed(() => {
-    if (route.query.data) {
+    if (store.getters["passData/passData"]) {
         try {
-            return JSON.parse(route.query.data);
+            return JSON.parse(store.getters["passData/passData"]);
         } catch (e) {
             console.error("解析路由数据时出错:", e);
             return null;
@@ -66,6 +68,17 @@ const pathData = computed(() => {
         console.error("路由查询中没有数据");
         return null;
     }
+    // if (route.query.data) {
+    //     try {
+    //         return JSON.parse(route.query.data);
+    //     } catch (e) {
+    //         console.error("解析路由数据时出错:", e);
+    //         return null;
+    //     }
+    // } else {
+    //     console.error("路由查询中没有数据");
+    //     return null;
+    // }
 });
 
 const goBack = () => {

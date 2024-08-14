@@ -159,14 +159,18 @@ const constructTreeData = async (data) => {
 watch(freezeId, (newVal) => {
     if (exportMode.value && newVal !== -1) {
         store.dispatch("export/startExport", newVal).then((data) => {
-            // router.push({ name: "preview", query: data });
+            store.commit("passData/setPassData", JSON.stringify(data));
 
-            router.push({
-                name: "preview",
-                query: {
-                    data: JSON.stringify(data),
-                },
-            });
+            console.log(store.getters["passData/passData"]);
+
+            router.push({ name: "preview" });
+
+            // router.push({
+            //     name: "preview",
+            //     query: {
+            //         data: JSON.stringify(data),
+            //     },
+            // });
 
             // constructTreeData(data).then((data) => {
             //   const pdfGraph = new PDFGraph(data);
