@@ -163,7 +163,8 @@ watch(freezeId, (newVal) => {
 
             console.log(store.getters["passData/passData"]);
 
-            router.push({ name: "preview" });
+            router.replace({ name: "preview" });
+            // router.push({ name: "preview" });
 
             // router.push({
             //     name: "preview",

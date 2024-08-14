@@ -1,24 +1,33 @@
 <template>
-    <div id="container">
-        <div id="left-panel">
-            <h1>Preview SVG Container</h1>
-            <div id="svg-content"></div>
-            <!-- 返回按钮 -->
-            <button @click="goBack" class="return-button">返回主页</button>
-        </div>
-        <div id="right-panel">
-            <h1>随机文本</h1>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="brand">Preview SVG Container</div>
+            <div style="flex-grow: 1"></div>
             <div>
-                <p>
-                    <span class="sentence" data-node-id="node-16"
-                        >这是第一句话。</span
-                    ><span class="sentence" data-node-id="node-17"
-                        >这是第二句话，包含了一些单词。</span
-                    ><span class="sentence" data-node-id="node-18"
-                        >这是第三句话，其中也有一些单词。</span
-                    >
-                    <!-- 继续添加其他句子 -->
-                </p>
+                <SvgIcon iconName="home" class="icon" @click="goBack"></SvgIcon>
+            </div>
+        </div>
+        <div class="content-box">
+            <div id="left-panel">
+                <!-- <h1>Preview SVG Container</h1> -->
+                <div id="svg-content"></div>
+                <!-- 返回按钮 -->
+                <!-- <button @click="goBack" class="return-button">返回主页</button> -->
+            </div>
+            <div id="right-panel">
+                <h1>随机文本</h1>
+                <div>
+                    <p>
+                        <span class="sentence" data-node-id="node-16"
+                            >这是第一句话。</span
+                        ><span class="sentence" data-node-id="node-17"
+                            >这是第二句话，包含了一些单词。</span
+                        ><span class="sentence" data-node-id="node-18"
+                            >这是第三句话，其中也有一些单词。</span
+                        >
+                        <!-- 继续添加其他句子 -->
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -82,8 +91,7 @@ const pathData = computed(() => {
 });
 
 const goBack = () => {
-    // router.push({ path: "/main" });
-    router.back(-1);
+    router.replace({ path: "/main" });
 };
 
 onMounted(async () => {
@@ -242,59 +250,91 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-#container {
-    display: flex;
-    margin: 20px;
-}
+.container {
+    @include container-base();
+    @include flex-box(column);
+    max-height: 100%;
+    // gap: 0.5rem;
 
-#left-panel {
-    flex: 1;
-    margin-right: 0px; /* 左右面板之间的空间 */
-}
-
-#right-panel {
-    flex: 1;
-    background-color: #f0f0f0; /* 可选: 添加背景颜色 */
-    padding: 20px; /* 可选: 添加内边距 */
-}
-
-#svg-content {
-    width: 100%;
-    height: auto;
-}
-
-.highlight {
-    background-color: yellow; /* 高亮效果 */
-}
-
-.return-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.return-button:hover {
-    background-color: #0056b3;
-}
-
-.sentence {
-    margin: 40px 0;
-    cursor: pointer;
-    /* font-size: 100px; */
-}
-
-/* .highlight-node {
-    transform: scale(1.2); // 放大节点 
-    } */
-#main-svg {
-    .node {
-        &.highlight-node {
-            transform: scale(1.5);
+    .nav-bar {
+        flex: auto;
+        width: 100%;
+        height: 5%;
+        box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
+        z-index: $z-top-absolute;
+        @include flex-box();
+        align-items: center;
+        padding-left: 1rem;
+        background-color: $background-color-light;
+        .brand {
+            font-size: 2rem;
+            font-weight: bold;
+            color: $primary-color;
+        }
+        .icon {
+            @include icon-style($icon-size-small);
+            background-color: transparent !important;
+            margin-right: 6px;
+            &:hover {
+                fill: $secondary-color;
+                background-color: $background-color-dark;
+            }
         }
     }
+
+    .content-box {
+        height: 95%;
+        width: 100%;
+        display: flex;
+    }
 }
+
+// // #container {
+// //     display: flex;
+// //     margin: 20px;
+// // }
+
+// // #left-panel {
+// //     flex: 1;
+// //     margin-right: 0px; /* 左右面板之间的空间 */
+// // }
+
+// // #right-panel {
+// //     flex: 1;
+// //     background-color: #f0f0f0; /* 可选: 添加背景颜色 */
+// //     padding: 20px; /* 可选: 添加内边距 */
+// // }
+
+// #svg-content {
+//     width: 100%;
+//     height: auto;
+// }
+
+// .highlight {
+//     background-color: yellow; /* 高亮效果 */
+// }
+
+// .return-button {
+//     margin-top: 20px;
+//     padding: 10px 20px;
+//     background-color: #007bff;
+//     color: #fff;
+//     border: none;
+//     border-radius: 5px;
+//     cursor: pointer;
+// }
+
+// .return-button:hover {
+//     background-color: #0056b3;
+// }
+
+// .sentence {
+//     margin: 40px 0;
+//     cursor: pointer;
+//     /* font-size: 100px; */
+// }
+
+/* .highlight-node {
+    transform: scale(1.2); // 放大节点
+    } */
 </style>
