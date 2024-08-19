@@ -18,11 +18,11 @@
                 <h1>随机文本</h1>
                 <div>
                     <p>
-                        <span class="sentence" data-node-id="node-16"
+                        <span class="sentence" data-node-id="node-50"
                             >这是第一句话。</span
-                        ><span class="sentence" data-node-id="node-17"
+                        ><span class="sentence" data-node-id="node-51"
                             >这是第二句话，包含了一些单词。</span
-                        ><span class="sentence" data-node-id="node-18"
+                        ><span class="sentence" data-node-id="node-52"
                             >这是第三句话，其中也有一些单词。</span
                         >
                         <!-- 继续添加其他句子 -->
@@ -40,6 +40,7 @@ import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
 import { getNodeDetail, getVlSpec } from "@/api/panel.js";
 
+// constructTreeData with data from main-page
 const constructTreeData = async (data) => {
     const nodes = data.nodes;
     const realIdList = nodes.map((d) => d.realId);
@@ -68,6 +69,7 @@ const store = useStore();
 const pathData = computed(() => {
     if (store.getters["passData/passData"]) {
         try {
+            console.log("data", JSON.parse(store.getters["passData/passData"]));
             return JSON.parse(store.getters["passData/passData"]);
         } catch (e) {
             console.error("解析路由数据时出错:", e);
@@ -91,7 +93,8 @@ const pathData = computed(() => {
 });
 
 const goBack = () => {
-    router.replace({ path: "/main" });
+    router.back();
+    // router.replace({ path: "/main" });
 };
 
 onMounted(async () => {
@@ -113,6 +116,10 @@ onMounted(async () => {
 
     try {
         await constructTreeData(data).then((data) => {
+            console.log("processed data: ", data);
+            console.log("data.nodes[0]: ", data.nodes[0]);
+            console.log("data.nodes[3]: ", data.nodes[3]);
+
             // constructTreeData(data).then((data) => {
             const pdfGraph = new PDFGraph(data);
             console.log("PDFGraph 初始化成功");
@@ -137,7 +144,7 @@ onMounted(async () => {
     function handleMouseOver(event) {
         // console.log("MouseOver");
         const sentence = d3.select(event.currentTarget);
-        const nodeId = sentence.attr("data-node-id");
+        const coNodeId = sentence.attr("data-node-id");
         const svg = d3.select("#main-svg");
 
         if (!svg.node()) {
@@ -149,11 +156,11 @@ onMounted(async () => {
         const nodeList = svg.select(".top-g-node").selectChildren(".node");
 
         // console.log("nodeList:", nodeList);
-        // console.log(`${nodeId}`);
+        // console.log(`${coNodeId}`);
 
         const nodeElement = nodeList.filter((node) => {
             // console.log(`node: node-${node.data.id}`);
-            return `node-${node.data.id}` === nodeId;
+            return `node-${node.data.id}` === coNodeId;
         });
 
         console.log("nodeElement: ", nodeElement);
@@ -169,7 +176,7 @@ onMounted(async () => {
 
     function handleMouseOut(event) {
         const sentence = d3.select(event.currentTarget);
-        const nodeId = sentence.attr("data-node-id");
+        const coNodeId = sentence.attr("data-node-id");
         const svg = d3.select("#main-svg");
 
         if (!svg.node()) {
@@ -182,7 +189,7 @@ onMounted(async () => {
 
         console.log("nodeList:", nodeList);
         const nodeElement = nodeList.filter((node) => {
-            return `node-${node.data.id}` === nodeId;
+            return `node-${node.data.id}` === coNodeId;
         });
 
         if (nodeElement.node()) {
@@ -214,19 +221,19 @@ onMounted(async () => {
 
     //     function handleMouseOver(event) {
     //         const sentence = event.currentTarget;
-    //         const nodeId = sentence.getAttribute("data-node-id"); // 假设每个句子都有一个data-node-id属性
-    //         const nodeElement = document.getElementById(nodeId);
+    //         const coNodeId = sentence.getAttribute("data-node-id"); // 假设每个句子都有一个data-node-id属性
+    //         const nodeElement = document.getElementById(coNodeId);
     //         if (nodeElement) {
     //             nodeElement.classList.add("highlight-node");
-    //             // 如果边也需要高亮，可以通过nodeId查找相关边并高亮
+    //             // 如果边也需要高亮，可以通过coNodeId查找相关边并高亮
     //         }
     //         sentence.classList.add("highlight");
     //     }
 
     //     function handleMouseOut(event) {
     //         const sentence = event.currentTarget;
-    //         const nodeId = sentence.getAttribute("data-node-id");
-    //         const nodeElement = document.getElementById(nodeId);
+    //         const coNodeId = sentence.getAttribute("data-node-id");
+    //         const nodeElement = document.getElementById(coNodeId);
     //         if (nodeElement) {
     //             nodeElement.classList.remove("highlight-node");
     //         }
@@ -310,10 +317,6 @@ onMounted(async () => {
 //     height: auto;
 // }
 
-// .highlight {
-//     background-color: yellow; /* 高亮效果 */
-// }
-
 // .return-button {
 //     margin-top: 20px;
 //     padding: 10px 20px;
@@ -328,11 +331,14 @@ onMounted(async () => {
 //     background-color: #0056b3;
 // }
 
-// .sentence {
-//     margin: 40px 0;
-//     cursor: pointer;
-//     /* font-size: 100px; */
-// }
+.sentence {
+    margin: 40px 0;
+    cursor: pointer;
+    /* font-size: 100px; */
+}
+.highlight {
+    background-color: yellow; /* 高亮效果 */
+}
 
 /* .highlight-node {
     transform: scale(1.2); // 放大节点

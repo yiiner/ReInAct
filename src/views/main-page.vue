@@ -142,13 +142,25 @@ const constructTreeData = async (data) => {
     // get description of all nodes
     const descriptionPromiseList = realIdList.map((id) => getNodeDetail(id));
     const nodeDetailResults = await Promise.all(descriptionPromiseList);
+
+    console.log("output nodeDetailResults: ", nodeDetailResults);
+
     const descriptionList = nodeDetailResults.map(
         (res) => res.data.description
     );
+
+    // get category of all nodes
+    // const categoryList = nodeDetailResults.map((res) => res.data.category);
+
+    // get type of all nodes
+    const typeList = nodeDetailResults.map((res) => res.data.type);
+
     const insightNodes = nodes.map((node, index) => ({
         ...node,
         description: descriptionList[index],
         vegaLite: vlSpecList[index],
+        // category: categoryList[index],
+        type: typeList[index],
     }));
     return {
         nodes: insightNodes,
@@ -159,11 +171,11 @@ const constructTreeData = async (data) => {
 watch(freezeId, (newVal) => {
     if (exportMode.value && newVal !== -1) {
         store.dispatch("export/startExport", newVal).then((data) => {
-            store.commit("passData/setPassData", JSON.stringify(data));
+            // store.commit("passData/setPassData", JSON.stringify(data));
 
-            console.log(store.getters["passData/passData"]);
+            // console.log(store.getters["passData/passData"]);
 
-            router.replace({ name: "preview" });
+            // router.replace({ name: "preview" });
             // router.push({ name: "preview" });
 
             // router.push({
@@ -177,7 +189,11 @@ watch(freezeId, (newVal) => {
             //   const pdfGraph = new PDFGraph(data);
             //   pdfGraph.createGraph();
             // });
-
+            console.log("data before processing: ", data);
+            constructTreeData(data).then((res) => {
+                console.log("data after processing: ", res);
+                store.dispatch("passData/postPassData", res);
+            });
             // constructPathData(data).then((data) => {
             //   const pdfGraph = new PDFGraph(data);
             //   pdfGraph.createGraph();

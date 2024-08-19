@@ -78,6 +78,7 @@ export default {
                 })
                     .then((res) => {
                         const data = res.data;
+                        console.log("From server: ", res.data);
                         const newNodeInfo = data.nodes;
                         console.log("from query:", newNodeInfo);
 
