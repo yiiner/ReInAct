@@ -193,7 +193,9 @@ watch(freezeId, (newVal) => {
             constructTreeData(data).then((res) => {
                 console.log("data after processing: ", res);
                 store.dispatch("passData/postPassData", res);
+                router.push({ name: "preview" });
             });
+
             // constructPathData(data).then((data) => {
             //   const pdfGraph = new PDFGraph(data);
             //   pdfGraph.createGraph();

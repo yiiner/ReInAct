@@ -38,29 +38,29 @@ import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
-import { getNodeDetail, getVlSpec } from "@/api/panel.js";
+// import { getNodeDetail, getVlSpec } from "@/api/panel.js";
 
 // constructTreeData with data from main-page
-const constructTreeData = async (data) => {
-    const nodes = data.nodes;
-    const realIdList = nodes.map((d) => d.realId);
-    const vlSpecListResult = await getVlSpec(realIdList);
-    const vlSpecList = vlSpecListResult.data.vlList;
-    const descriptionPromiseList = realIdList.map((id) => getNodeDetail(id));
-    const nodeDetailResults = await Promise.all(descriptionPromiseList);
-    const descriptionList = nodeDetailResults.map(
-        (res) => res.data.description
-    );
-    const insightNodes = nodes.map((node, index) => ({
-        ...node,
-        description: descriptionList[index],
-        vegaLite: vlSpecList[index],
-    }));
-    return {
-        nodes: insightNodes,
-        links: data.links,
-    };
-};
+// const constructTreeData = async (data) => {
+//     const nodes = data.nodes;
+//     const realIdList = nodes.map((d) => d.realId);
+//     const vlSpecListResult = await getVlSpec(realIdList);
+//     const vlSpecList = vlSpecListResult.data.vlList;
+//     const descriptionPromiseList = realIdList.map((id) => getNodeDetail(id));
+//     const nodeDetailResults = await Promise.all(descriptionPromiseList);
+//     const descriptionList = nodeDetailResults.map(
+//         (res) => res.data.description
+//     );
+//     const insightNodes = nodes.map((node, index) => ({
+//         ...node,
+//         description: descriptionList[index],
+//         vegaLite: vlSpecList[index],
+//     }));
+//     return {
+//         nodes: insightNodes,
+//         links: data.links,
+//     };
+// };
 
 const route = useRoute();
 const router = useRouter();
@@ -69,8 +69,10 @@ const store = useStore();
 const pathData = computed(() => {
     if (store.getters["passData/passData"]) {
         try {
-            console.log("data", JSON.parse(store.getters["passData/passData"]));
-            return JSON.parse(store.getters["passData/passData"]);
+            console.log("data", store.getters["passData/passData"]);
+            return store.getters["passData/passData"];
+            // console.log("data", JSON.parse(store.getters["passData/passData"]));
+            // return JSON.parse(store.getters["passData/passData"]);
         } catch (e) {
             console.error("解析路由数据时出错:", e);
             return null;
@@ -79,6 +81,7 @@ const pathData = computed(() => {
         console.error("路由查询中没有数据");
         return null;
     }
+
     // if (route.query.data) {
     //     try {
     //         return JSON.parse(route.query.data);
@@ -100,6 +103,8 @@ const goBack = () => {
 onMounted(async () => {
     // onMounted(() => {
     console.log("onMounted 钩子触发");
+
+    console.log("pathData: ", pathData);
     const data = pathData.value;
     console.log("onMounted 中解析的数据:", data);
 
@@ -115,17 +120,17 @@ onMounted(async () => {
     }
 
     try {
-        await constructTreeData(data).then((data) => {
-            console.log("processed data: ", data);
-            console.log("data.nodes[0]: ", data.nodes[0]);
-            console.log("data.nodes[3]: ", data.nodes[3]);
+        const pdfGraph = new PDFGraph(data);
+        console.log("PDFGraph 初始化成功");
+        pdfGraph.createGraph(containerNode);
+        console.log("图表创建成功");
 
-            // constructTreeData(data).then((data) => {
-            const pdfGraph = new PDFGraph(data);
-            console.log("PDFGraph 初始化成功");
-            pdfGraph.createGraph(containerNode);
-            console.log("图表创建成功");
-        });
+        // await constructTreeData(data).then((data) => {
+        //     const pdfGraph = new PDFGraph(data);
+        //     console.log("PDFGraph 初始化成功");
+        //     pdfGraph.createGraph(containerNode);
+        //     console.log("图表创建成功");
+        // });
     } catch (error) {
         console.error("创建图表时出错:", error);
     }
