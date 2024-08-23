@@ -161,6 +161,7 @@ const constructTreeData = async (data) => {
         vegaLite: vlSpecList[index],
         // category: categoryList[index],
         type: typeList[index],
+        query: "",
     }));
     return {
         nodes: insightNodes,
@@ -190,6 +191,7 @@ watch(freezeId, (newVal) => {
             //   pdfGraph.createGraph();
             // });
             console.log("data before processing: ", data);
+            // pass the whole processed data
             constructTreeData(data).then((res) => {
                 console.log("data after processing: ", res);
                 store.dispatch("passData/postPassData", res);
