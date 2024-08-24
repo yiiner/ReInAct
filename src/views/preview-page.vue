@@ -18,16 +18,18 @@
                 <h1>随机文本</h1>
                 <div>
                     <p>
-                        <span class="sentence" data-node-id="node-50"
+                        <span class="sentence" data-node-id="node-85"
                             >这是第一句话。</span
                         ><span class="sentence" data-node-id="node-51"
                             >这是第二句话，包含了一些单词。</span
                         ><span class="sentence" data-node-id="node-52"
                             >这是第三句话，其中也有一些单词。</span
                         >
-                        <!-- 继续添加其他句子 -->
+                        继续添加其他句子
                     </p>
                 </div>
+                <!-- <h1>Summary</h1> -->
+                <p id="summary"></p>
             </div>
         </div>
     </div>

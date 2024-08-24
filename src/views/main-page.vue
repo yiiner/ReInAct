@@ -169,48 +169,24 @@ const constructTreeData = async (data) => {
     };
 };
 
-watch(freezeId, (newVal) => {
+watch(freezeId, async (newVal) => {
     if (exportMode.value && newVal !== -1) {
-        store.dispatch("export/startExport", newVal).then((data) => {
-            // store.commit("passData/setPassData", JSON.stringify(data));
+        const data = await store.dispatch("export/startExport", newVal);
 
-            // console.log(store.getters["passData/passData"]);
+        console.log("data before processing: ", data);
 
-            // router.replace({ name: "preview" });
-            // router.push({ name: "preview" });
+        const processedData = await constructTreeData(data);
 
-            // router.push({
-            //     name: "preview",
-            //     query: {
-            //         data: JSON.stringify(data),
-            //     },
-            // });
+        const result = await store.dispatch(
+            "passData/postPassData",
+            processedData
+        );
 
-            // constructTreeData(data).then((data) => {
-            //   const pdfGraph = new PDFGraph(data);
-            //   pdfGraph.createGraph();
-            // });
-            console.log("data before processing: ", data);
-            // pass the whole processed data
-            constructTreeData(data).then((res) => {
-                console.log("data after processing: ", res);
-                store.dispatch("passData/postPassData", res);
-                router.push({ name: "preview" });
-            });
+        // ! waiting for a time loading animation
 
-            // constructPathData(data).then((data) => {
-            //   const pdfGraph = new PDFGraph(data);
-            //   pdfGraph.createGraph();
-            //   // router.push({
-            //   //   name: "preview",
-            //   //   query: {
-            //   //     data: JSON.stringify(data),
-            //   //   },
-            //   // });
-            // });
-        });
+        router.push({ name: "preview" });
     }
-}); // difference
+});
 
 /* -------------------------------------------------------------------------- */
 // table upload
