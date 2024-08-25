@@ -15,8 +15,9 @@
                 <!-- <button @click="goBack" class="return-button">返回主页</button> -->
             </div>
             <div id="right-panel">
-                <h1>随机文本</h1>
-                <div>
+                <h1>Summary</h1>
+                <!-- <h1>随机文本</h1> -->
+                <!-- <div>
                     <p>
                         <span class="sentence" data-node-id="node-85"
                             >这是第一句话。</span
@@ -27,9 +28,9 @@
                         >
                         继续添加其他句子
                     </p>
-                </div>
+                </div> -->
                 <!-- <h1>Summary</h1> -->
-                <p id="summary"></p>
+                <p id="summary" v-html="summaryContent"></p>
             </div>
         </div>
     </div>
@@ -40,34 +41,12 @@ import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
-// import { getNodeDetail, getVlSpec } from "@/api/panel.js";
-
-// constructTreeData with data from main-page
-// const constructTreeData = async (data) => {
-//     const nodes = data.nodes;
-//     const realIdList = nodes.map((d) => d.realId);
-//     const vlSpecListResult = await getVlSpec(realIdList);
-//     const vlSpecList = vlSpecListResult.data.vlList;
-//     const descriptionPromiseList = realIdList.map((id) => getNodeDetail(id));
-//     const nodeDetailResults = await Promise.all(descriptionPromiseList);
-//     const descriptionList = nodeDetailResults.map(
-//         (res) => res.data.description
-//     );
-//     const insightNodes = nodes.map((node, index) => ({
-//         ...node,
-//         description: descriptionList[index],
-//         vegaLite: vlSpecList[index],
-//     }));
-//     return {
-//         nodes: insightNodes,
-//         links: data.links,
-//     };
-// };
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
 
+// get nodes and links data from store
 const pathData = computed(() => {
     if (store.getters["passData/passData"]) {
         try {
@@ -83,59 +62,50 @@ const pathData = computed(() => {
         console.error("路由查询中没有数据");
         return null;
     }
-
-    // if (route.query.data) {
-    //     try {
-    //         return JSON.parse(route.query.data);
-    //     } catch (e) {
-    //         console.error("解析路由数据时出错:", e);
-    //         return null;
-    //     }
-    // } else {
-    //     console.error("路由查询中没有数据");
-    //     return null;
-    // }
 });
 
+// get summary data from store
+const summaryData = computed(() => {
+    console.log("summary: ", store.getters["passData/getSummary"]);
+    return store.getters["passData/getSummary"];
+});
+
+// back to mainPage
 const goBack = () => {
     router.back();
     // router.replace({ path: "/main" });
 };
 
+// lifeHook
 onMounted(async () => {
-    // onMounted(() => {
-    console.log("onMounted 钩子触发");
+    // console.log("onMounted 钩子触发");
 
-    console.log("pathData: ", pathData);
+    // console.log("pathData: ", pathData);
     const data = pathData.value;
-    console.log("onMounted 中解析的数据:", data);
+    // console.log("onMounted 中解析的数据:", data);
 
-    if (!data || typeof data !== "object" || !data.nodes || !data.links) {
-        console.error("无效的数据:", data);
-        return;
-    }
+    // if (!data || typeof data !== "object" || !data.nodes || !data.links) {
+    //     console.error("无效的数据:", data);
+    //     return;
+    // }
 
     const containerNode = d3.select("#svg-content").node();
-    if (!containerNode) {
-        console.error("未找到容器节点");
-        return;
-    }
+    // if (!containerNode) {
+    //     console.error("未找到容器节点");
+    //     return;
+    // }
 
     try {
         const pdfGraph = new PDFGraph(data);
         console.log("PDFGraph 初始化成功");
         pdfGraph.createGraph(containerNode);
         console.log("图表创建成功");
-
-        // await constructTreeData(data).then((data) => {
-        //     const pdfGraph = new PDFGraph(data);
-        //     console.log("PDFGraph 初始化成功");
-        //     pdfGraph.createGraph(containerNode);
-        //     console.log("图表创建成功");
-        // });
     } catch (error) {
         console.error("创建图表时出错:", error);
     }
+
+    const summaryContent = `${summaryData.value}`;
+    const summarySentence = d3.select("#summary").html(summaryContent);
 
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
