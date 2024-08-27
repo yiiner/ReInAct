@@ -2,7 +2,7 @@ import { drawVl } from "@/utils/vega_lite/vlDrawer.js";
 import { link } from "d3";
 
 class PDFGraph {
-    constructor(data) {
+    constructor(data, store) {
         this.defaultConfig = {
             // top borders
             iBorderWidth: 450, // insight
@@ -58,6 +58,7 @@ class PDFGraph {
             (this.defaultConfig.rBorderHeight +
                 this.defaultConfig.iBorderHeight +
                 this.defaultConfig.borderGap);
+        this.store = store;
     }
 
     // use d3.hierarchy to get tree structure
@@ -339,12 +340,16 @@ class PDFGraph {
                 const nodeGs = enter
                     .append("g")
                     .attr("class", "node")
-                    .attr("id", (d) => `node-${d.data.id}`) // 添加 id 属性
-                    .style("transform", (d) => `translate(${d.x}px,${d.y}px)`);
+                    .attr("id", (d) => `${d.data.id}`)
+                    .style("transform", (d) => `translate(${d.x}px,${d.y}px)`)
+                    // .on("mouseover", handleMouseOver)
+                    .on("mouseenter", handleMouseOver)
+                    .on("mouseout", handleMouseOut);
+
                 // select nodes which have question and relationship bar
-                const nodeGRich = nodeGs.filter(
-                    (d) => d.data.id !== this.root.data.id
-                );
+                // const nodeGRich = nodeGs.filter(
+                //     (d) => d.data.id !== this.root.data.id
+                // );
                 // create relationship bar
                 // const relationship = nodeGRich
                 //     .append("g")
@@ -486,17 +491,58 @@ class PDFGraph {
 
         const zoom = d3
             .zoom()
-            // .extent([
-            //     [0, 0],
-            //     [this.containerWidth, this.containerHeight],
-            // ])
+            .extent([
+                [0, 0],
+                [this.containerWidth, this.containerHeight],
+            ])
             .scaleExtent([0.3, 8])
             .on("zoom", zooming);
 
         svg.call(zoom);
 
+        // import store and initialize hover state
+        this.store.dispatch("hover/changeId", null);
+
+        // add hover with the reuse of hover module
+        // nodes.on("mouseover", handleMouseOver).on("mouseout", handleMouseOut);
+
+        function handleMouseOver(payload) {
+            console.log("payload: ", payload);
+
+            const id = payload.id;
+            console.log("hovered id: ", id);
+
+            // toggleHover(payload.currentTarget, true);
+
+            // this.store.dispatch("hover/changeId", id);
+        }
+        function handleMouseOut(payload) {
+            console.log("payload: ", payload);
+
+            const id = payload.id;
+            console.log("hovered id: ", id);
+            // toggleHover(payload.currentTarget, false);
+
+            // this.store.dispatch("hover/changeId", null);
+        }
+
+        function toggleHover(nodeG, state, duration = 200) {
+            let transformStr = "";
+            let scale = 1.1;
+            if (state) {
+                transformStr = nodeG.style("transform") + ` scale(${scale})`;
+            } else {
+                transformStr = nodeG.style("transform").split("scale")[0];
+            }
+            nodeG
+                .transition()
+                .duration(duration)
+                .style("transform", transformStr);
+        }
+
         await Promise.all(promises);
         containerNode.appendChild(svg.node());
+
         // this.downloadSVG(svg.node(), "story");
     }
 
