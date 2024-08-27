@@ -96,6 +96,7 @@ onMounted(async () => {
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
 
+    // ! wait for separating node-sentence and edge-sentence
     const spanHighlighter = summarySentence
         .selectAll("span")
         .on("mouseover", handleMouseOver)

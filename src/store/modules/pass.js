@@ -67,10 +67,6 @@ export default {
                 });
                 console.log("passLinks: ", passLinks);
 
-                resolve({
-                    message: "Get summary successfully.",
-                });
-
                 // post passed data and get summary
                 getSummaryFromPassData({
                     nodes: passNodes,
