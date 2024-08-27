@@ -2,7 +2,7 @@ import { drawVl } from "@/utils/vega_lite/vlDrawer.js";
 import { link } from "d3";
 
 class PDFGraph {
-    constructor(data, store) {
+    constructor(data) {
         this.defaultConfig = {
             // top borders
             iBorderWidth: 450, // insight
@@ -58,7 +58,6 @@ class PDFGraph {
             (this.defaultConfig.rBorderHeight +
                 this.defaultConfig.iBorderHeight +
                 this.defaultConfig.borderGap);
-        this.store = store;
     }
 
     // use d3.hierarchy to get tree structure
@@ -341,10 +340,7 @@ class PDFGraph {
                     .append("g")
                     .attr("class", "node")
                     .attr("id", (d) => `${d.data.id}`)
-                    .style("transform", (d) => `translate(${d.x}px,${d.y}px)`)
-                    // .on("mouseover", handleMouseOver)
-                    .on("mouseenter", handleMouseOver)
-                    .on("mouseout", handleMouseOut);
+                    .style("transform", (d) => `translate(${d.x}px,${d.y}px)`);
 
                 // select nodes which have question and relationship bar
                 // const nodeGRich = nodeGs.filter(
@@ -452,6 +448,7 @@ class PDFGraph {
                     });
                     promises.push(promise);
                 });
+
                 // // draw description
                 // const descGs = insightNode
                 //     .append("g")
@@ -501,44 +498,7 @@ class PDFGraph {
         svg.call(zoom);
 
         // import store and initialize hover state
-        this.store.dispatch("hover/changeId", null);
-
-        // add hover with the reuse of hover module
-        // nodes.on("mouseover", handleMouseOver).on("mouseout", handleMouseOut);
-
-        function handleMouseOver(payload) {
-            console.log("payload: ", payload);
-
-            const id = payload.id;
-            console.log("hovered id: ", id);
-
-            // toggleHover(payload.currentTarget, true);
-
-            // this.store.dispatch("hover/changeId", id);
-        }
-        function handleMouseOut(payload) {
-            console.log("payload: ", payload);
-
-            const id = payload.id;
-            console.log("hovered id: ", id);
-            // toggleHover(payload.currentTarget, false);
-
-            // this.store.dispatch("hover/changeId", null);
-        }
-
-        function toggleHover(nodeG, state, duration = 200) {
-            let transformStr = "";
-            let scale = 1.1;
-            if (state) {
-                transformStr = nodeG.style("transform") + ` scale(${scale})`;
-            } else {
-                transformStr = nodeG.style("transform").split("scale")[0];
-            }
-            nodeG
-                .transition()
-                .duration(duration)
-                .style("transform", transformStr);
-        }
+        // this.store.dispatch("hover/changeId", null);
 
         await Promise.all(promises);
         containerNode.appendChild(svg.node());
