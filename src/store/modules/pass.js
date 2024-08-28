@@ -69,7 +69,7 @@ export default {
 
                 resolve({
                     message: "Get summary successfully.",
-                });
+                }); // delete
                 // post passed data and get summary
                 // getSummaryFromPassData({
                 //     nodes: passNodes,
@@ -90,7 +90,7 @@ export default {
                 //     })
                 //     .catch((error) => {
                 //         reject(error);
-                //     });
+                //     }); // recall
             });
         },
     },

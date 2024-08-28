@@ -11,8 +11,6 @@
             <div id="left-panel">
                 <!-- <h1>Preview SVG Container</h1> -->
                 <div id="svg-content"></div>
-                <!-- 返回按钮 -->
-                <!-- <button @click="goBack" class="return-button">返回主页</button> -->
             </div>
             <div id="right-panel">
                 <h1>Summary</h1>
@@ -104,7 +102,7 @@ onMounted(async () => {
     }
 
     // const summaryContent = `${summaryData.value}`;
-    // const summarySentence = d3.select("#summary").html(summaryContent);
+    // const summarySentence = d3.select("#summary").html(summaryContent); recall
 
     const tempSummaryContent = `<span class="insight-node-61">The user's exploration journey began with an interest in understanding why PlayStation 4 (PS4) sales were so high and whether other companies also had dominant brands.</span> <span class="insight-node-2">The user discovered that the sale of PS4 dominates among all brands for Sony.</span> <span class="insight-edge-2-3">This dominance of PS4 sales sparked curiosity about the sales patterns of other companies, leading to further exploration.</span>
 
@@ -121,43 +119,28 @@ onMounted(async () => {
     <span class="insight-node-19">The user's exploration of Microsoft's sales in Europe revealed a clear downward trend over the years from 2013 to 2020.</span> <span class="insight-node-20">This insight helped in understanding the long-term trend and how the specific patterns observed fit into the overall decline.</span> <span class="insight-node-21">The user also found that the sale of the year 2020 was an outlier, significantly lower than other years.</span> <span class="insight-node-22">Understanding the outlier nature of 2020 provided deeper insights into why the sales pattern deviated so drastically, which was crucial for identifying anomalies and their impact on overall sales trends.</span>
 
     <span class="insight-node-23 try">In conclusion, the user's exploration journey through the insight tree revealed significant insights about the dominance of PS4 sales for Sony, the declining sales of Microsoft, and the correlation of sales trends between Sony and Microsoft.</span> <span class="insight-node-24">The user was able to understand the temporal and geographical distribution of sales, identify anomalies, and compare the performance of different companies.</span> <span class="insight-node-25">This exploration process highlighted the importance of understanding the various factors that can influence sales, such as market conditions, product launches, and competition.</span>`;
-    const tempSummaryContainer = d3.select("#summary").html(tempSummaryContent);
+    const tempSummaryContainer = d3.select("#summary").html(tempSummaryContent); // delete
 
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
 
-    // const svg = d3.select("#main-svg");
-    // console.log("svg: ", svg);
+    // svg hock is lost
 
     const spanHighlighter = tempSummaryContainer
         .selectAll("span")
         .on("mouseover", handleMouseOver)
         .on("mouseout", handleMouseOut);
 
-    // Select all elements with class "sentence"
-    // const sentences = d3.selectAll(".sentence");
-
-    // console.log("sentences: ", sentences);
-
-    // Add event listeners for mouseover and mouseout
-    // sentences.on("mouseover", handleMouseOver).on("mouseout", handleMouseOut);
-
     function handleMouseOver(event) {
-        // console.log("MouseOver");
-
-        // select hovered sentence
+        // select hovered sentence // wait for distinction between node and edge
         const sentence = d3.select(event.currentTarget);
 
-        // const coNodeId = sentence.attr("data-node-id");
-
         // get hovered sentence class attribute value
-        // const coNodeId = sentence.attr("data-node-id");
         const sentenceClasses = sentence.attr("class");
         const sentenceClassesArr = sentenceClasses.split(" ");
         const coNodeId = sentenceClassesArr.find((className) =>
             className.startsWith("insight-node-")
         );
-        // console.log("className: ", coNodeId);
 
         const svg = d3.select("#main-svg");
 
@@ -165,19 +148,13 @@ onMounted(async () => {
             console.log("svg is null");
         }
 
-        // console.log("svg: ", svg);
-
         const nodeList = svg.select(".top-g-node").selectChildren(".node");
 
-        // console.log("nodeList:", nodeList);
-        // console.log(`${coNodeId}`);
-
         const nodeElement = nodeList.filter((node) => {
-            // console.log(`node: node-${node.data.id}`);
             return `insight-node-${node.data.id}` === coNodeId;
         });
 
-        // console.log("nodeElement: ", nodeElement);
+        console.log("nodeElement: ", nodeElement);
 
         if (nodeElement.node()) {
             toggleHover(nodeElement, true);
@@ -270,27 +247,6 @@ onMounted(async () => {
         }
     }
 }
-
-// // #container {
-// //     display: flex;
-// //     margin: 20px;
-// // }
-
-// // #left-panel {
-// //     flex: 1;
-// //     margin-right: 0px; /* 左右面板之间的空间 */
-// // }
-
-// // #right-panel {
-// //     flex: 1;
-// //     background-color: #f0f0f0; /* 可选: 添加背景颜色 */
-// //     padding: 20px; /* 可选: 添加内边距 */
-// // }
-
-// #svg-content {
-//     width: 100%;
-//     height: auto;
-// }
 
 .sentence {
     margin: 40px 0;

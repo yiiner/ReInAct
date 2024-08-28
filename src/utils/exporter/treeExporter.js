@@ -340,9 +340,8 @@ class PDFGraph {
                 const nodeGs = enter
                     .append("g")
                     .attr("class", "node")
-                    .attr("id", (d) => `${d.data.id}`)
+                    .attr("id", (d) => `${d.data.id}`) // wait for check
                     .style("transform", (d) => `translate(${d.x}px,${d.y}px)`)
-                    // .on("mouseover", handleMouseOver)
                     .on("mouseenter", handleMouseOver)
                     .on("mouseout", handleMouseOut);
 
@@ -481,7 +480,6 @@ class PDFGraph {
         // let topGs = svg.selectChildren("g");
         const zooming = function (event, d) {
             // get transform
-            // const transform = event.transform;
             const transform = `translate(${event.transform.x}, ${event.transform.y}) scale(${event.transform.k})`;
 
             // apply transform to top g elements
