@@ -122,7 +122,7 @@ class PDFGraph {
       .attr("xmlns", "http://www.w3.org/2000/svg")
       .attr("viewBox", [
         -this.containerWidth / 2 +
-          (this.defaultConfig.iBorderWidth + this.defaultConfig.borderGap),
+          (this.defaultConfig.iBorderWidth + this.defaultConfig.borderGap) / 2,
         -15,
         this.containerWidth,
         this.containerHeight,
