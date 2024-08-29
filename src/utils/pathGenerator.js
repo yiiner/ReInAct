@@ -180,7 +180,7 @@ class PathGraph extends EventEmitter {
                     // add cursor event handler
                     topGs
                         .filter((d) => d !== num - 1)
-                        .style("cursor", "pointer") // later
+                        .style("cursor", "pointer")
                         .on("mouseenter", function (_event, idx) {
                             self.emit("node-hover", {
                                 id: pathList[idx].id,

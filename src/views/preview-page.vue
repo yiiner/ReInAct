@@ -72,6 +72,8 @@ const goBack = () => {
     // router.replace({ path: "/main" });
 };
 
+//
+
 // lifeHook
 onMounted(async () => {
     // console.log("onMounted 钩子触发");
@@ -91,15 +93,11 @@ onMounted(async () => {
     //     return;
     // }
 
-    try {
-        const pdfGraph = new PDFGraph(data, store);
-        console.log("PDFGraph 初始化成功");
-        pdfGraph.createGraph(containerNode);
+    const pdfGraph = new PDFGraph(data, store);
+    console.log("PDFGraph 初始化成功");
+    pdfGraph.createGraph(containerNode);
 
-        console.log("图表创建成功");
-    } catch (error) {
-        console.error("创建图表时出错:", error);
-    }
+    console.log("图表创建成功");
 
     // const summaryContent = `${summaryData.value}`;
     // const summarySentence = d3.select("#summary").html(summaryContent); recall
@@ -125,7 +123,7 @@ onMounted(async () => {
     nextTick();
 
     // svg hock is lost
-
+    // hover for sentence
     const spanHighlighter = tempSummaryContainer
         .selectAll("span")
         .on("mouseover", handleMouseOver)
