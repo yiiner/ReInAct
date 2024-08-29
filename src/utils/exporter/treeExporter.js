@@ -109,6 +109,7 @@ class PDFGraph {
     async createGraph(containerNode) {
         const self = this;
         const root = this.root;
+        const store = this.store;
         // awaiting for completion of vega-lite drawing
         const promises = [];
         const svg = d3
@@ -343,8 +344,40 @@ class PDFGraph {
                     .attr("id", (d) => `${d.data.id}`) // wait for check
                     .style("transform", (d) => `translate(${d.x}px,${d.y}px)`)
                     .style("cursor", "pointer")
-                    .on("mouseenter", handleMouseOverNode)
-                    .on("mouseleave", handleMouseOutNode);
+                    .on("mouseenter", (event) => {
+                        const hoveredNode = d3.select(event.target);
+                        console.log("hoveredNode: ", hoveredNode);
+
+                        const hoveredNodeId = hoveredNode.attr("id");
+                        console.log("hoveredNodeId: ", hoveredNodeId);
+
+                        toggleHover(hoveredNode, true);
+
+                        store.dispatch("hover/changeId", hoveredNodeId);
+
+                        console.log(
+                            "hoveredNodeId from store: ",
+                            store.getters["hover/id"]
+                        );
+                    })
+                    .on("mouseleave", (event) => {
+                        const hoveredNode = d3.select(event.target);
+                        console.log("hoveredNode: ", hoveredNode);
+
+                        const hoveredNodeId = hoveredNode.attr("id");
+                        console.log("hoveredNodeId: ", hoveredNodeId);
+
+                        toggleHover(hoveredNode, false);
+
+                        store.dispatch("hover/changeId", null);
+
+                        console.log(
+                            "hoveredNodeId from store: ",
+                            store.getters["hover/id"]
+                        );
+                    });
+                // .on("mouseenter", handleMouseOverNode)
+                // .on("mouseleave", handleMouseOutNode);
                 // select nodes which have question and relationship bar
                 // const nodeGRich = nodeGs.filter(
                 //     (d) => d.data.id !== this.root.data.id
@@ -499,32 +532,32 @@ class PDFGraph {
         svg.call(zoom);
 
         // import store and initialize hover state
-        this.store.dispatch("hover/changeId", null);
+        // this.store.dispatch("hover/changeId", null);
 
         // add hover with the reuse of hover module
 
-        function handleMouseOverNode(event) {
-            const hoveredNode = d3.select(event.target);
-            console.log("hoveredNode: ", hoveredNode);
+        // function handleMouseOverNode(event) {
+        //     const hoveredNode = d3.select(event.target);
+        //     console.log("hoveredNode: ", hoveredNode);
 
-            const hoveredNodeId = hoveredNode.attr("id");
-            console.log("hoveredNodeId: ", hoveredNodeId);
+        //     const hoveredNodeId = hoveredNode.attr("id");
+        //     console.log("hoveredNodeId: ", hoveredNodeId);
 
-            toggleHover(hoveredNode, true);
+        //     toggleHover(hoveredNode, true);
 
-            this.store.dispatch("hover/changeId", id);
-        }
-        function handleMouseOutNode(event) {
-            const hoveredNode = d3.select(event.target);
-            console.log("hoveredNode: ", hoveredNode);
+        //     // this.store.dispatch("hover/changeId", hoveredNodeId);
+        // }
+        // function handleMouseOutNode(event) {
+        //     const hoveredNode = d3.select(event.target);
+        //     console.log("hoveredNode: ", hoveredNode);
 
-            const hoveredNodeId = hoveredNode.attr("id");
-            console.log("hoveredNodeId: ", hoveredNodeId);
+        //     const hoveredNodeId = hoveredNode.attr("id");
+        //     console.log("hoveredNodeId: ", hoveredNodeId);
 
-            toggleHover(hoveredNode, false);
+        //     toggleHover(hoveredNode, false);
 
-            this.store.dispatch("hover/changeId", null);
-        }
+        //     // this.store.dispatch("hover/changeId", null);
+        // }
 
         function toggleHover(nodeG, state, duration = 200) {
             let transformStr = "";

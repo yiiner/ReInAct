@@ -44,6 +44,15 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 
+// hover related
+const pdfGraph = ref(null);
+
+const handlerNodeHover = (payload) => {
+    console.log("hovered: ", payload);
+    const id = payload.id;
+    store.dispatch("hover/changeId", id);
+};
+
 // get nodes and links data from store
 const pathData = computed(() => {
     if (store.getters["passData/passData"]) {
@@ -75,7 +84,7 @@ const goBack = () => {
 //
 
 // lifeHook
-onMounted(async () => {
+onMounted(() => {
     // console.log("onMounted 钩子触发");
 
     // console.log("pathData: ", pathData);
@@ -93,11 +102,15 @@ onMounted(async () => {
     //     return;
     // }
 
-    const pdfGraph = new PDFGraph(data, store);
-    console.log("PDFGraph 初始化成功");
-    pdfGraph.createGraph(containerNode);
+    // const pdfGraph = new PDFGraph(data, store);
+    // console.log("PDFGraph 初始化成功");
+    // pdfGraph.createGraph(containerNode);
+    // console.log("图表创建成功");
 
-    console.log("图表创建成功");
+    pdfGraph.value = new PDFGraph(data, store);
+    console.log("pdfGraph Initialized Successfully");
+    pdfGraph.value.createGraph(containerNode);
+    console.log("graph created successfully");
 
     // const summaryContent = `${summaryData.value}`;
     // const summarySentence = d3.select("#summary").html(summaryContent); recall
@@ -123,6 +136,8 @@ onMounted(async () => {
     nextTick();
 
     // svg hock is lost
+    // const svg = d3.select("#main-svg");
+    // console.log("svg: ", svg);
     // hover for sentence
     const spanHighlighter = tempSummaryContainer
         .selectAll("span")
