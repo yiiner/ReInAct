@@ -14,28 +14,17 @@
             </div>
             <div id="right-panel">
                 <h1>Summary</h1>
-                <!-- <h1>随机文本</h1> -->
-                <div>
-                    <p>
-                        <span class="sentence highlight" data-node-id="node-85"
-                            >这是第一句话。</span
-                        ><span class="sentence try" data-node-id="node-51"
-                            >这是第二句话，包含了一些单词。</span
-                        ><span class="sentence" data-node-id="node-52"
-                            >这是第三句话，其中也有一些单词。</span
-                        >
-                        继续添加其他句子
-                    </p>
-                </div>
                 <!-- <h1>Summary</h1> -->
-                <p id="summary"></p>
+                <div>
+                    <p id="summary"></p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, onMounted, computed, nextTick, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
@@ -44,14 +33,7 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 
-// hover related
 const pdfGraph = ref(null);
-
-const handlerNodeHover = (payload) => {
-    console.log("hovered: ", payload);
-    const id = payload.id;
-    store.dispatch("hover/changeId", id);
-};
 
 // get nodes and links data from store
 const pathData = computed(() => {
@@ -81,10 +63,27 @@ const goBack = () => {
     // router.replace({ path: "/main" });
 };
 
-//
+// hover node related
+const hoverNodeId = computed(() => store.getters["hover/id"]);
+watch(hoverNodeId, (newVal, oldVal) => {
+    const id = newVal || oldVal;
+
+    console.log("hover related id: ", id);
+
+    const sentence = d3.select("#summary").selectAll(`span.insight-node-${id}`);
+
+    console.log("sentence: ", sentence);
+
+    if (newVal) {
+        sentence.classed("highlight", true);
+    } else {
+        sentence.classed("highlight", false);
+    }
+});
 
 // lifeHook
-onMounted(() => {
+onMounted(async () => {
+    // onMounted(() => {
     // console.log("onMounted 钩子触发");
 
     // console.log("pathData: ", pathData);
@@ -112,25 +111,8 @@ onMounted(() => {
     pdfGraph.value.createGraph(containerNode);
     console.log("graph created successfully");
 
-    // const summaryContent = `${summaryData.value}`;
-    // const summarySentence = d3.select("#summary").html(summaryContent); recall
-
-    const tempSummaryContent = `<span class="insight-node-61">The user's exploration journey began with an interest in understanding why PlayStation 4 (PS4) sales were so high and whether other companies also had dominant brands.</span> <span class="insight-node-2">The user discovered that the sale of PS4 dominates among all brands for Sony.</span> <span class="insight-edge-2-3">This dominance of PS4 sales sparked curiosity about the sales patterns of other companies, leading to further exploration.</span>
-
-    <span class="insight-node-4">The user then turned their attention to Microsoft, noticing that unlike Sony and Nintendo, Microsoft did not have a dominant brand.</span> <span class="insight-node-5">The user discovered that the sale of the year 2014 was an outlier for Microsoft, significantly higher than other years.</span> <span class="insight-edge-5-6">This anomaly in sales data led the user to investigate the reasons behind these anomalies, which might include market conditions, product launches, or other factors.</span> <span class="insight-node-7">This insight helped the user understand the temporal distribution of sales and identify any unusual patterns that could explain high sales figures.</span>
-
-    <span class="insight-node-8">In addition to temporal distribution, the user also explored the geographical distribution of sales.</span> <span class="insight-node-9">The user found that the sale of North America dominates among all locations for Microsoft.</span> <span class="insight-node-10">This insight provided a comparison point for regional dominance, allowing the user to compare this with Nintendo's regional sales to see if there were similar patterns of dominance.</span>
-
-    <span class="insight-node-11">The user's exploration of Microsoft's sales continued, focusing on the declining sales year by year.</span> <span class="insight-node-12">The user discovered that the sale of North America dominates among all locations for the Xbox One.</span> <span class="insight-edge-12-13">This insight provided a geographical context to the sales data, leading to further investigation into market-specific factors that might be contributing to the decline in sales.</span>
-
-    <span class="insight-node-14">The user also discovered a clear downward trend in sales from 2013 to 2020 for the Xbox 360.</span> <span class="insight-node-15">This insight provided a temporal context and showed that the decline was not just a short-term anomaly but a long-term trend.</span> <span class="insight-node-16">This insight helped the user understand the broader pattern of declining sales over the years, which was crucial for addressing the question of why Microsoft's sales were declining.</span>
-
-    <span class="insight-node-17">The user then compared the sales trends of Sony and Microsoft, finding that the sale of Europe, Japan, North America, and other locations are correlated for Sony.</span> <span class="insight-node-18">This comparison was crucial for understanding the competitive landscape and how both companies' sales trends are correlated across different regions.</span>
-
-    <span class="insight-node-19">The user's exploration of Microsoft's sales in Europe revealed a clear downward trend over the years from 2013 to 2020.</span> <span class="insight-node-20">This insight helped in understanding the long-term trend and how the specific patterns observed fit into the overall decline.</span> <span class="insight-node-21">The user also found that the sale of the year 2020 was an outlier, significantly lower than other years.</span> <span class="insight-node-22">Understanding the outlier nature of 2020 provided deeper insights into why the sales pattern deviated so drastically, which was crucial for identifying anomalies and their impact on overall sales trends.</span>
-
-    <span class="insight-node-23 try">In conclusion, the user's exploration journey through the insight tree revealed significant insights about the dominance of PS4 sales for Sony, the declining sales of Microsoft, and the correlation of sales trends between Sony and Microsoft.</span> <span class="insight-node-24">The user was able to understand the temporal and geographical distribution of sales, identify anomalies, and compare the performance of different companies.</span> <span class="insight-node-25">This exploration process highlighted the importance of understanding the various factors that can influence sales, such as market conditions, product launches, and competition.</span>`;
-    const tempSummaryContainer = d3.select("#summary").html(tempSummaryContent); // delete
+    const summaryContent = `${summaryData.value}`;
+    const summarySentence = d3.select("#summary").html(summaryContent);
 
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
@@ -139,7 +121,7 @@ onMounted(() => {
     // const svg = d3.select("#main-svg");
     // console.log("svg: ", svg);
     // hover for sentence
-    const spanHighlighter = tempSummaryContainer
+    const spanHighlighter = summarySentence
         .selectAll("span")
         .on("mouseover", handleMouseOver)
         .on("mouseout", handleMouseOut);

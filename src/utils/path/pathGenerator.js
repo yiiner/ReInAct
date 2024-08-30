@@ -211,21 +211,11 @@ class PathGraph extends EventEmitter {
                         .filter((d) => d !== num - 1)
                         .style("cursor", "pointer") // later
                         .on("mouseenter", function (_event, idx) {
-                            console.log("_event: ", _event);
-                            console.log("_event.target", _event.target);
-                            console.log("idx: ", idx);
-                            console.log("pathList: ", pathList);
-
                             self.emit("node-hover", {
                                 id: pathList[idx].id,
                             });
                         })
                         .on("mouseleave", function (_event, idx) {
-                            console.log("_event: ", _event);
-                            console.log("_event.target", _event.target);
-                            console.log("idx: ", idx);
-                            console.log("pathList: ", pathList);
-
                             self.emit("node-hover", {
                                 id: null,
                             });

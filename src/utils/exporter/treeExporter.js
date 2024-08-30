@@ -346,7 +346,7 @@ class PDFGraph {
                     .style("cursor", "pointer")
                     .on("mouseenter", (event) => {
                         const hoveredNode = d3.select(event.target);
-                        console.log("hoveredNode: ", hoveredNode);
+                        // console.log("hoveredNode: ", hoveredNode);
 
                         const hoveredNodeId = hoveredNode.attr("id");
                         console.log("hoveredNodeId: ", hoveredNodeId);
@@ -355,14 +355,14 @@ class PDFGraph {
 
                         store.dispatch("hover/changeId", hoveredNodeId);
 
-                        console.log(
-                            "hoveredNodeId from store: ",
-                            store.getters["hover/id"]
-                        );
+                        // console.log(
+                        //     "hoveredNodeId from store: ",
+                        //     store.getters["hover/id"]
+                        // );
                     })
                     .on("mouseleave", (event) => {
                         const hoveredNode = d3.select(event.target);
-                        console.log("hoveredNode: ", hoveredNode);
+                        // console.log("hoveredNode: ", hoveredNode);
 
                         const hoveredNodeId = hoveredNode.attr("id");
                         console.log("hoveredNodeId: ", hoveredNodeId);
@@ -371,10 +371,10 @@ class PDFGraph {
 
                         store.dispatch("hover/changeId", null);
 
-                        console.log(
-                            "hoveredNodeId from store: ",
-                            store.getters["hover/id"]
-                        );
+                        // console.log(
+                        //     "hoveredNodeId from store: ",
+                        //     store.getters["hover/id"]
+                        // );
                     });
                 // .on("mouseenter", handleMouseOverNode)
                 // .on("mouseleave", handleMouseOutNode);
