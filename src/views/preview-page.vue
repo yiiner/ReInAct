@@ -88,7 +88,7 @@ onMounted(async () => {
 
     pdfGraph.value = new PDFGraph(data, store);
     console.log("PDFGraph 初始化成功");
-    pdfGraph.createGraph(containerNode);
+    pdfGraph.value.createGraph(containerNode);
     console.log("图表创建成功");
 
     const summaryContent = `${summaryData.value}`;
@@ -111,25 +111,21 @@ onMounted(async () => {
 
         // get hovered sentence class attribute value
         const sentenceClasses = sentence.attr("class");
-        // const sentenceClassesArr = sentenceClasses.split(" ");
-        // const coNodeId = sentenceClassesArr.find((className) =>
-        //     className.startsWith("insight-node-")
-        // );
-        const coNodeId = sentenceClasses.includes(
-            (className) => className.startsWith("insight-node-") // wait for check
+
+        if (!sentenceClasses) {
+            return;
+        }
+        const sentenceClassesArr = sentenceClasses.split(" ");
+        const coNodeId = sentenceClassesArr.find((className) =>
+            className.startsWith("insight-node-")
         );
+
         if (coNodeId) {
             sentence.classed("highlight", true);
         }
 
         const svg = d3.select("#main-svg");
-
-        if (!svg.node()) {
-            console.log("svg is null");
-        }
-
         const nodeList = svg.select(".top-g-node").selectChildren(".node");
-
         const nodeElement = nodeList.filter((node) => {
             return `insight-node-${node.data.id}` === coNodeId;
         });
@@ -143,24 +139,21 @@ onMounted(async () => {
         const sentence = d3.select(event.currentTarget);
 
         const sentenceClasses = sentence.attr("class");
-        // const sentenceClassesArr = sentenceClasses.split(" ");
-        // const coNodeId = sentenceClassesArr.find((className) =>
-        //     className.startsWith("insight-node-")
-        // );
 
-        const coNodeId = sentenceClasses.includes((className) =>
+        if (!sentenceClasses) {
+            return;
+        }
+
+        const sentenceClassesArr = sentenceClasses.split(" ");
+        const coNodeId = sentenceClassesArr.find((className) =>
             className.startsWith("insight-node-")
-        ); //
+        );
 
         if (coNodeId) {
             sentence.classed("highlight", false);
         }
 
         const svg = d3.select("#main-svg");
-
-        if (!svg.node()) {
-            console.log("svg is null");
-        }
 
         const nodeList = svg.select(".top-g-node").selectChildren(".node");
 
@@ -171,8 +164,6 @@ onMounted(async () => {
         if (nodeElement.node()) {
             toggleHover(nodeElement, false);
         }
-
-        sentence.classed("highlight", false);
     }
 
     function toggleHover(nodeG, state, duration = 200) {

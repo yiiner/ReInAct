@@ -60,7 +60,7 @@ class PDFGraph {
             (this.defaultConfig.rBorderHeight +
                 this.defaultConfig.iBorderHeight +
                 this.defaultConfig.borderGap);
-        this.store = this;
+        this.store = store;
     }
 
     // use d3.hierarchy to get tree structure
