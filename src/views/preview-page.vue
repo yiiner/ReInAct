@@ -11,33 +11,19 @@
             <div id="left-panel">
                 <!-- <h1>Preview SVG Container</h1> -->
                 <div id="svg-content"></div>
-                <!-- 返回按钮 -->
-                <!-- <button @click="goBack" class="return-button">返回主页</button> -->
             </div>
             <div id="right-panel">
                 <h1>Summary</h1>
-                <!-- <h1>随机文本</h1> -->
-                <!-- <div>
-                    <p>
-                        <span class="sentence highlight" data-node-id="node-85"
-                            >这是第一句话。</span
-                        ><span class="sentence try" data-node-id="node-51"
-                            >这是第二句话，包含了一些单词。</span
-                        ><span class="sentence" data-node-id="node-52"
-                            >这是第三句话，其中也有一些单词。</span
-                        >
-                        继续添加其他句子
-                    </p>
-                </div> -->
-                <!-- <h1>Summary</h1> -->
-                <p id="summary"></p>
+                <div>
+                    <p id="summary"></p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, onMounted, computed, nextTick, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
@@ -45,6 +31,8 @@ import { PDFGraph } from "@/utils/exporter/treeExporter.js";
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+
+const pdfGraph = ref(null);
 
 // get nodes and links data from store
 const pathData = computed(() => {
@@ -74,21 +62,34 @@ const goBack = () => {
     // router.replace({ path: "/main" });
 };
 
+// hover node related
+const hoverNodeId = computed(() => store.getters["hover/id"]);
+watch(hoverNodeId, (newVal, oldVal) => {
+    const id = newVal || oldVal;
+
+    console.log("hover related id: ", id);
+
+    const sentence = d3.select("#summary").selectAll(`span.insight-node-${id}`);
+
+    console.log("sentence: ", sentence);
+
+    if (newVal) {
+        sentence.classed("highlight", true);
+    } else {
+        sentence.classed("highlight", false);
+    }
+});
+
 // lifeHook
 onMounted(async () => {
     const data = pathData.value;
 
     const containerNode = d3.select("#svg-content").node();
 
-    try {
-        const pdfGraph = new PDFGraph(data);
-        console.log("PDFGraph 初始化成功");
-        pdfGraph.createGraph(containerNode);
-
-        console.log("图表创建成功");
-    } catch (error) {
-        console.error("创建图表时出错:", error);
-    }
+    pdfGraph.value = new PDFGraph(data, store);
+    console.log("PDFGraph 初始化成功");
+    pdfGraph.createGraph(containerNode);
+    console.log("图表创建成功");
 
     const summaryContent = `${summaryData.value}`;
     const summarySentence = d3.select("#summary").html(summaryContent);
@@ -96,8 +97,8 @@ onMounted(async () => {
     // 使用 nextTick 确保 DOM 更新后再添加事件监听
     nextTick();
 
-    // ! wait for separating node-sentence and edge-sentence
-    TODO;
+    // const svg = d3.select("#main-svg");
+    // console.log("svg: ", svg);
 
     const spanHighlighter = summarySentence
         .selectAll("span")
@@ -114,8 +115,8 @@ onMounted(async () => {
         // const coNodeId = sentenceClassesArr.find((className) =>
         //     className.startsWith("insight-node-")
         // );
-        const coNodeId = sentenceClasses.find((className) =>
-            className.startsWith("insight-node-")
+        const coNodeId = sentenceClasses.includes(
+            (className) => className.startsWith("insight-node-") // wait for check
         );
         if (coNodeId) {
             sentence.classed("highlight", true);
@@ -147,9 +148,9 @@ onMounted(async () => {
         //     className.startsWith("insight-node-")
         // );
 
-        const coNodeId = sentenceClasses.find((className) =>
+        const coNodeId = sentenceClasses.includes((className) =>
             className.startsWith("insight-node-")
-        );
+        ); //
 
         if (coNodeId) {
             sentence.classed("highlight", false);
