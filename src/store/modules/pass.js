@@ -67,27 +67,31 @@ export default {
                 });
                 console.log("passLinks: ", passLinks);
 
+                resolve({
+                    message: "Get summary successfully.",
+                }); // delete
+
                 // post passed data and get summary
-                getSummaryFromPassData({
-                    nodes: passNodes,
-                    edges: passLinks,
-                })
-                    .then((res) => {
-                        const data = res.data;
-                        console.log("From serve: ", res.data);
+                // getSummaryFromPassData({
+                //     nodes: passNodes,
+                //     edges: passLinks,
+                // })
+                //     .then((res) => {
+                //         const data = res.data;
+                //         console.log("From serve: ", res.data);
 
-                        const summary = data.summary;
+                //         const summary = data.summary;
 
-                        console.log("From summary: ", summary);
-                        context.commit("setSummary", summary);
+                //         console.log("From summary: ", summary);
+                //         context.commit("setSummary", summary);
 
-                        resolve({
-                            message: "Get summary successfully.",
-                        });
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
+                //         resolve({
+                //             message: "Get summary successfully.",
+                //         });
+                //     })
+                //     .catch((error) => {
+                //         reject(error);
+                //     }); // recall
             });
         },
     },

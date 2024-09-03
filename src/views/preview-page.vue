@@ -27,6 +27,7 @@ import { ref, onMounted, computed, nextTick, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
+import svgIcon from "../components/ui/svg-icon.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -205,10 +206,10 @@ onMounted(async () => {
             @include icon-style($icon-size-small);
             background-color: transparent !important;
             margin-right: 6px;
-            &:hover {
-                fill: $secondary-color;
-                background-color: $background-color-dark;
-            }
+            // &:hover {
+            //     fill: $secondary-color;
+            //     background-color: $background-color-dark;
+            // }
         }
     }
     #svg-content {
