@@ -1,34 +1,34 @@
 // represent current foucs node, mainly for filter panel to listen
 export default {
-  namespaced: true,
-  state() {
-    return {
-      realId: -1,
-      dataScope: null,
-    };
-  },
-  getters: {
-    realId(state) {
-      return state.realId;
+    namespaced: true,
+    state() {
+        return {
+            realId: -1,
+            dataScope: null,
+        };
     },
-    dataScope(state) {
-      return state.dataScope;
+    getters: {
+        realId(state) {
+            return state.realId;
+        },
+        dataScope(state) {
+            return state.dataScope;
+        },
     },
-  },
-  mutations: {
-    setRealId(state, payload) {
-      state.realId = payload;
+    mutations: {
+        setRealId(state, payload) {
+            state.realId = payload;
+        },
+        setDataScope(state, payload) {
+            state.dataScope = payload;
+        },
     },
-    setDataScope(state, payload) {
-      state.dataScope = payload;
+    actions: {
+        changeRealId(context, payload) {
+            context.commit("setRealId", payload);
+        },
+        changeDataScope(context, payload) {
+            context.commit("setDataScope", payload);
+        },
     },
-  },
-  actions: {
-    changeRealId(context, paylaod) {
-      context.commit("setRealId", paylaod);
-    },
-    changeDataScope(context, paylaod) {
-      context.commit("setDataScope", paylaod);
-    },
-  },
 };
