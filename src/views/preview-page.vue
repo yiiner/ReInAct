@@ -1,12 +1,12 @@
 <template>
     <div class="container">
-        <div class="nav-bar">
+        <!-- <div class="nav-bar">
             <div class="brand">Preview SVG Container</div>
             <div style="flex-grow: 1"></div>
             <div>
                 <SvgIcon iconName="home" class="icon" @click="goBack"></SvgIcon>
             </div>
-        </div>
+        </div> -->
         <div class="content-box">
             <div id="left-panel">
                 <!-- <h1>Preview SVG Container</h1> -->
@@ -23,45 +23,61 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {
+    ref,
+    onMounted,
+    computed,
+    nextTick,
+    watch,
+    defineComponent,
+} from "vue";
+// import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
 import svgIcon from "../components/ui/svg-icon.vue";
 
-const route = useRoute();
-const router = useRouter();
+defineComponent({
+    name: "PreviewPage",
+});
+
+// const route = useRoute();
+// const router = useRouter();
 const store = useStore();
+
+const props = defineProps({
+    exportData: Object,
+    summaryData: Object,
+});
 
 const pdfGraph = ref(null);
 
-// get nodes and links data from store
-const pathData = computed(() => {
-    if (store.getters["passData/passData"]) {
-        try {
-            console.log("data", store.getters["passData/passData"]);
-            return store.getters["passData/passData"];
-        } catch (e) {
-            console.error("解析路由数据时出错:", e);
-            return null;
-        }
-    } else {
-        console.error("路由查询中没有数据");
-        return null;
-    }
-});
+// // get nodes and links data from store
+// const pathData = computed(() => {
+//     if (store.getters["passData/passData"]) {
+//         try {
+//             console.log("data", store.getters["passData/passData"]);
+//             return store.getters["passData/passData"];
+//         } catch (e) {
+//             console.error("解析路由数据时出错:", e);
+//             return null;
+//         }
+//     } else {
+//         console.error("路由查询中没有数据");
+//         return null;
+//     }
+// });
 
-// get summary data from store
-const summaryData = computed(() => {
-    console.log("summary: ", store.getters["passData/getSummary"]);
-    return store.getters["passData/getSummary"];
-});
+// // get summary data from store
+// const summaryData = computed(() => {
+//     console.log("summary: ", store.getters["passData/getSummary"]);
+//     return store.getters["passData/getSummary"];
+// });
 
-// back to mainPage
-const goBack = () => {
-    router.back();
-    // router.replace({ path: "/main" });
-};
+// // back to mainPage
+// const goBack = () => {
+//     router.back();
+//     // router.replace({ path: "/main" });
+// };
 
 // hover node related
 const hoverNodeId = computed(() => store.getters["hover/id"]);
@@ -83,28 +99,39 @@ watch(hoverNodeId, (newVal, oldVal) => {
 
 // lifeHook
 onMounted(async () => {
-    const data = pathData.value;
+    // const data = pathData.value;
 
-    const containerNode = d3.select("#svg-content").node();
+    if (props.exportData) {
+        const containerNode = d3.select("#svg-content").node();
 
-    pdfGraph.value = new PDFGraph(data, store);
-    console.log("PDFGraph 初始化成功");
-    pdfGraph.value.createGraph(containerNode);
-    console.log("图表创建成功");
+        console.log("pathData Proxy: ", props.exportData);
 
-    const summaryContent = `${summaryData.value}`;
-    const summarySentence = d3.select("#summary").html(summaryContent);
+        pdfGraph.value = new PDFGraph(props.exportData, store);
+        // console.log("PDFGraph 初始化成功");
+        await pdfGraph.value.createGraph(containerNode);
+        // console.log("图表创建成功");
 
-    // 使用 nextTick 确保 DOM 更新后再添加事件监听
-    nextTick();
+        // console.log("summaryData: ", props.summaryData); recall
+
+        // const summaryContent = `${props.summaryData.summary}`;
+        // const summarySentence = d3.select("#summary").html(summaryContent); recall
+
+        // 使用 nextTick 确保 DOM 更新后再添加事件监听
+        nextTick(() => {
+            // summarySentence
+            //     .selectAll("span")
+            //     .on("mouseover", handleMouseOver)
+            //     .on("mouseout", handleMouseOut); recall
+        });
+    }
 
     // const svg = d3.select("#main-svg");
     // console.log("svg: ", svg);
 
-    const spanHighlighter = summarySentence
-        .selectAll("span")
-        .on("mouseover", handleMouseOver)
-        .on("mouseout", handleMouseOut);
+    // const spanHighlighter = summarySentence
+    //     .selectAll("span")
+    //     .on("mouseover", handleMouseOver)
+    //     .on("mouseout", handleMouseOut);
 
     function handleMouseOver(event) {
         // select hovered sentence
@@ -183,35 +210,35 @@ onMounted(async () => {
 <style lang="scss">
 .container {
     @include container-base();
-    @include flex-box(column);
-    max-height: 100%;
-    // gap: 0.5rem;
+    // @include flex-box(column);
+    // max-height: 100%;
+    // // gap: 0.5rem;
 
-    .nav-bar {
-        flex: auto;
-        width: 100%;
-        height: 5%;
-        box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
-        z-index: $z-top-absolute;
-        @include flex-box();
-        align-items: center;
-        padding-left: 1rem;
-        background-color: $background-color-light;
-        .brand {
-            font-size: 2rem;
-            font-weight: bold;
-            color: $primary-color;
-        }
-        .icon {
-            @include icon-style($icon-size-small);
-            background-color: transparent !important;
-            margin-right: 6px;
-            // &:hover {
-            //     fill: $secondary-color;
-            //     background-color: $background-color-dark;
-            // }
-        }
-    }
+    // .nav-bar {
+    //     flex: auto;
+    //     width: 100%;
+    //     height: 5%;
+    //     box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
+    //     z-index: $z-top-absolute;
+    //     @include flex-box();
+    //     align-items: center;
+    //     padding-left: 1rem;
+    //     background-color: $background-color-light;
+    //     .brand {
+    //         font-size: 2rem;
+    //         font-weight: bold;
+    //         color: $primary-color;
+    //     }
+    //     .icon {
+    //         @include icon-style($icon-size-small);
+    //         background-color: transparent !important;
+    //         margin-right: 6px;
+    //         // &:hover {
+    //         //     fill: $secondary-color;
+    //         //     background-color: $background-color-dark;
+    //         // }
+    //     }
+    // }
     #svg-content {
         height: 100%;
     }

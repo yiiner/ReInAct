@@ -34,6 +34,9 @@ class PDFGraph {
             // relType
             angleWidth: 20,
         };
+        console.log("data: ", data);
+        console.log("data nodes: ", data.nodes);
+        console.log("data links: ", data.links);
         this.nodeData = data.nodes;
         this.linkData = data.links;
         this.root = this.getTreeStructure();

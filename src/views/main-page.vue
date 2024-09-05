@@ -5,51 +5,82 @@
         element-loading-custom-class="main"
         element-loading-text="Computing..."
     >
-        <div class="nav-bar">
-            <div class="brand">LLM Guided Table Exploration</div>
-            <div style="flex-grow: 1"></div>
-            <div>
-                <SvgIcon
-                    iconName="upload"
-                    :class="['icon', { disabled: hasProcessed }]"
-                    @click="uploadTable"
-                ></SvgIcon>
-                <input
-                    type="file"
-                    ref="fileInput"
-                    @change="handleFileChange"
-                    accept=".xls,.xlsx"
-                    style="display: none"
-                />
-            </div>
-            <SvgIcon
-                iconName="export"
-                :class="['icon', { disabled: !hasProcessed }]"
-                @click="handleExport"
-            ></SvgIcon>
-        </div>
-        <div class="content-box">
-            <div
-                class="loading-mask"
-                v-if="!hasProcessed"
-                v-loading="isPreprocessing"
-                element-loading-text="Calculating Insights ..."
-            >
-                <div class="introduction">
-                    <div>Upload <strong>.xls/.xlsx</strong> files now</div>
-                    <div class="explain">start <em>talking with LLMs</em></div>
-                    <div class="explain">
-                        & exploring your <em>Insight Stories</em>!
+        <transition>
+            <div class="main" v-show="showPage">
+                <div class="nav-bar">
+                    <div class="brand">LLM Guided Table Exploration</div>
+                    <div style="flex-grow: 1"></div>
+                    <div>
+                        <SvgIcon
+                            iconName="upload"
+                            :class="['icon', { disabled: hasProcessed }]"
+                            @click="uploadTable"
+                        ></SvgIcon>
+                        <input
+                            type="file"
+                            ref="fileInput"
+                            @change="handleFileChange"
+                            accept=".xls,.xlsx"
+                            style="display: none"
+                        />
+                    </div>
+                    <SvgIcon
+                        iconName="export"
+                        :class="['icon', { disabled: !hasProcessed }]"
+                        @click="handleExport"
+                    ></SvgIcon>
+                </div>
+                <div class="content-box">
+                    <div
+                        class="loading-mask"
+                        v-if="!hasProcessed"
+                        v-loading="isPreprocessing"
+                        element-loading-text="Calculating Insights ..."
+                    >
+                        <div class="introduction">
+                            <div>
+                                Upload <strong>.xls/.xlsx</strong> files now
+                            </div>
+                            <div class="explain">
+                                start <em>talking with LLMs</em>
+                            </div>
+                            <div class="explain">
+                                & exploring your <em>Insight Stories</em>!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-box" v-show="!exportMode">
+                        <FilterPanel></FilterPanel>
+                    </div>
+                    <div class="graph-box">
+                        <CircleGraph></CircleGraph>
                     </div>
                 </div>
             </div>
-            <div class="filter-box" v-show="!exportMode">
-                <FilterPanel></FilterPanel>
+        </transition>
+
+        <transition>
+            <div class="preview" v-show="!showPage">
+                <div class="nav-bar">
+                    <div class="brand">Preview SVG Container</div>
+                    <div style="flex-grow: 1"></div>
+                    <div>
+                        <SvgIcon
+                            iconName="home"
+                            class="icon"
+                            @click="goBack"
+                        ></SvgIcon>
+                    </div>
+                </div>
+                <div class="content-box">
+                    <PreviewPage
+                        v-if="exportDataReady"
+                        :exportData="exportData"
+                        :summaryData="summaryData"
+                    ></PreviewPage>
+                </div>
             </div>
-            <div class="graph-box">
-                <CircleGraph></CircleGraph>
-            </div>
-        </div>
+        </transition>
     </div>
 </template>
 <script setup>
@@ -60,6 +91,7 @@ import { useStore } from "vuex";
 import CircleGraph from "@/components/graph/circle-graph.vue";
 import FilterPanel from "@/components/filter/filter-panel.vue";
 import SvgIcon from "../components/ui/svg-icon.vue";
+import PreviewPage from "./preview-page.vue";
 import { PDFGraph } from "@/utils/exporter/treeExporter.js";
 
 defineComponent({
@@ -70,9 +102,18 @@ defineComponent({
 // other
 /* -------------------------------------------------------------------------- */
 const store = useStore();
-const router = useRouter();
+// const router = useRouter();
+
 // control timing of creating force graph component
 const isLoading = ref(true);
+
+// control the page showing on the main
+const showPage = ref(true);
+
+// define props to pass data to preview-page
+const exportDataReady = ref(false);
+const exportData = ref(null);
+const summaryData = ref(null);
 /* -------------------------------------------------------------------------- */
 // export mode
 /* -------------------------------------------------------------------------- */
@@ -175,16 +216,27 @@ watch(freezeId, async (newVal) => {
 
         console.log("data before processing: ", data);
 
-        const processedData = await constructTreeData(data);
+        exportData.value = await constructTreeData(data); // mature data
 
-        const result = await store.dispatch(
+        console.log("MainPage pathData: ", exportData.value);
+
+        summaryData.value = await store.dispatch(
             "passData/postPassData",
-            processedData
-        );
+            exportData.value
+        ); // wait
+
+        // const processedData = await constructTreeData(data);
+
+        // const result = await store.dispatch(
+        //     "passData/postPassData",
+        //     processedData
+        // );
 
         // ! waiting for a time loading animation
 
-        router.push({ name: "preview" });
+        // router.push({ name: "preview" });
+        exportDataReady.value = true;
+        showPage.value = false;
     }
 });
 
@@ -229,12 +281,21 @@ const uploadTable = () => {
     fileInput.value.value = null;
     fileInput.value.click();
 };
+/* -------------------------------------------------------------------------- */
+// preview page
+/* -------------------------------------------------------------------------- */
+
+const goBack = () => {
+    showPage.value = true;
+    exportDataReady.value = false;
+};
+
 // starter
 onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
-.container {
+.container-section {
     @include container-base();
     @include flex-box(column);
     max-height: 100%;
@@ -266,17 +327,39 @@ onMounted(() => {});
             }
         }
     }
+}
 
-    .content-box {
-        height: 95%;
-        width: 100%;
-        display: flex;
-        .filter-box {
-            width: 32%;
+.container {
+    .main {
+        @extend .container-section;
+
+        .content-box {
+            height: 95%;
+            width: 100%;
+            display: flex;
+            .filter-box {
+                width: 32%;
+            }
+            .graph-box {
+                flex: auto;
+            }
         }
-        .graph-box {
-            flex: auto;
-        }
+    }
+
+    .preview {
+        @extend .container-section;
+
+        // .content-box {
+        //     height: 95%;
+        //     width: 100%;
+        //     display: flex;
+        //     .filter-box {
+        //         width: 32%;
+        //     }
+        //     .graph-box {
+        //         flex: auto;
+        //     }
+        // }
     }
 }
 

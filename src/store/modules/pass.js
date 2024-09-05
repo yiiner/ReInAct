@@ -42,7 +42,7 @@ export default {
                 console.log("passData payload nodes: ", payload.nodes);
                 console.log("passData payload edges: ", payload.links);
 
-                context.commit("setPassData", payload);
+                // context.commit("setPassData", payload);
 
                 // integrate pass Nodes data
                 const passNodes = payload.nodes.map((node) => {
@@ -71,7 +71,7 @@ export default {
                     message: "Get summary successfully.",
                 }); // delete
 
-                // post passed data and get summary
+                // // post passed data and get summary
                 // getSummaryFromPassData({
                 //     nodes: passNodes,
                 //     edges: passLinks,
@@ -83,9 +83,10 @@ export default {
                 //         const summary = data.summary;
 
                 //         console.log("From summary: ", summary);
-                //         context.commit("setSummary", summary);
+                //         // context.commit("setSummary", summary);
 
                 //         resolve({
+                //             summary: summary,
                 //             message: "Get summary successfully.",
                 //         });
                 //     })
