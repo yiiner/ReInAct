@@ -8,6 +8,7 @@ import nodeMoverModule from "./modules/node_mover";
 import freezeModule from "./modules/freeze";
 import exportModule from "./modules/export";
 
+import changePageModule from "./modules/change";
 import passDataModule from "./modules/pass";
 // import treeDataModule from "./modules/tree";
 // import graphDataModule from "./modules/graph";
@@ -22,6 +23,7 @@ const store = createStore({
         nodeMover: nodeMoverModule,
         freeze: freezeModule,
         export: exportModule,
+        changePage: changePageModule,
         passData: passDataModule,
         // tree: treeDataModule,
         // graph: graphDataModule,

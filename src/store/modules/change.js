@@ -27,7 +27,7 @@ export default {
         },
 
         setExportDataReady(store, payload) {
-            store.setExportDataReady = payload;
+            store.exportDataReady = payload;
         },
     },
 

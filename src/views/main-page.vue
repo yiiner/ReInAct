@@ -61,7 +61,7 @@
 
         <transition>
             <div class="preview" v-show="!showPage">
-                <div class="nav-bar">
+                <!-- <div class="nav-bar">
                     <div class="brand">Preview SVG Container</div>
                     <div style="flex-grow: 1"></div>
                     <div>
@@ -71,14 +71,13 @@
                             @click="goBack"
                         ></SvgIcon>
                     </div>
-                </div>
-                <div class="content-box">
-                    <PreviewPage
-                        v-if="exportDataReady"
-                        :exportData="exportData"
-                        :summaryData="summaryData"
-                    ></PreviewPage>
-                </div>
+                </div> -->
+
+                <PreviewPage
+                    v-if="exportDataReady"
+                    :exportData="exportData"
+                    :summaryData="summaryData"
+                ></PreviewPage>
             </div>
         </transition>
     </div>
@@ -108,10 +107,24 @@ const store = useStore();
 const isLoading = ref(true);
 
 // control the page showing on the main
-const showPage = ref(true);
+// const showPage = ref(true);
+const showPage = computed(() => {
+    console.log(
+        "showPage after export: ",
+        store.getters["changePage/showPage"]
+    );
+    return store.getters["changePage/showPage"];
+});
 
 // define props to pass data to preview-page
-const exportDataReady = ref(false);
+// const exportDataReady = ref(false);
+const exportDataReady = computed(() => {
+    console.log(
+        "exportDataReady after export: ",
+        store.getters["changePage/exportDataReady"]
+    );
+    return store.getters["changePage/exportDataReady"];
+});
 const exportData = ref(null);
 const summaryData = ref(null);
 /* -------------------------------------------------------------------------- */
@@ -235,8 +248,10 @@ watch(freezeId, async (newVal) => {
         // ! waiting for a time loading animation
 
         // router.push({ name: "preview" });
-        exportDataReady.value = true;
-        showPage.value = false;
+        // exportDataReady.value = true;
+        // showPage.value = false;
+        store.commit("changePage/setExportDataReady", true);
+        store.commit("changePage/setShowPage", false);
     }
 });
 
@@ -285,81 +300,49 @@ const uploadTable = () => {
 // preview page
 /* -------------------------------------------------------------------------- */
 
-const goBack = () => {
-    showPage.value = true;
-    exportDataReady.value = false;
-};
+// const goBack = () => {
+//     showPage.value = true;
+//     exportDataReady.value = false;
+// };
 
 // starter
 onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
-.container-section {
-    @include container-base();
-    @include flex-box(column);
-    max-height: 100%;
-    // gap: 0.5rem;
-
-    .nav-bar {
-        flex: auto;
-        width: 100%;
-        box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
-        z-index: $z-top-absolute;
-        @include flex-box();
-        align-items: center;
-        padding-left: 1rem;
-        background-color: $background-color-light;
-        .brand {
-            font-size: 2rem;
-            font-weight: bold;
-            color: $primary-color;
-        }
-        .icon {
-            @include icon-style($icon-size-small);
-            margin-right: 6px;
-
-            &.disabled {
-                pointer-events: none;
-                fill: $text-color-light;
-                // background-color: $background-color-dark;
-                // fill: $;
-            }
-        }
-    }
-}
-
 .container {
     .main {
-        @extend .container-section;
+        @include container-base();
+        @include flex-box(column);
+        max-height: 100%;
+        // gap: 0.5rem;
 
-        .content-box {
-            height: 95%;
+        .nav-bar {
+            flex: auto;
             width: 100%;
-            display: flex;
-            .filter-box {
-                width: 32%;
+            box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
+            z-index: $z-top-absolute;
+            @include flex-box();
+            align-items: center;
+            padding-left: 1rem;
+            background-color: $background-color-light;
+            .brand {
+                font-size: 2rem;
+                font-weight: bold;
+                color: $primary-color;
             }
-            .graph-box {
-                flex: auto;
+            .icon {
+                @include icon-style($icon-size-small);
+                margin-right: 6px;
+
+                &.disabled {
+                    pointer-events: none;
+                    fill: $text-color-light;
+                    // background-color: $background-color-dark;
+                    // fill: $;
+                }
             }
         }
-    }
-
-    .preview {
-        @extend .container-section;
-
-        // .content-box {
-        //     height: 95%;
-        //     width: 100%;
-        //     display: flex;
-        //     .filter-box {
-        //         width: 32%;
-        //     }
-        //     .graph-box {
-        //         flex: auto;
-        //     }
-        // }
     }
 }
 

@@ -1,12 +1,12 @@
 <template>
     <div class="container">
-        <!-- <div class="nav-bar">
+        <div class="nav-bar">
             <div class="brand">Preview SVG Container</div>
             <div style="flex-grow: 1"></div>
             <div>
                 <SvgIcon iconName="home" class="icon" @click="goBack"></SvgIcon>
             </div>
-        </div> -->
+        </div>
         <div class="content-box">
             <div id="left-panel">
                 <!-- <h1>Preview SVG Container</h1> -->
@@ -74,10 +74,12 @@ const pdfGraph = ref(null);
 // });
 
 // // back to mainPage
-// const goBack = () => {
-//     router.back();
-//     // router.replace({ path: "/main" });
-// };
+const goBack = () => {
+    // router.back();
+    // router.replace({ path: "/main" });
+    store.commit("changePage/setShowPage", true);
+    store.commit("changePage/setExportDataReady", false);
+};
 
 // hover node related
 const hoverNodeId = computed(() => store.getters["hover/id"]);
@@ -115,6 +117,9 @@ onMounted(async () => {
 
         // const summaryContent = `${props.summaryData.summary}`;
         // const summarySentence = d3.select("#summary").html(summaryContent); recall
+
+        const svg = d3.select("#main-svg");
+        console.log("svg:", svg);
 
         // 使用 nextTick 确保 DOM 更新后再添加事件监听
         nextTick(() => {
@@ -210,35 +215,36 @@ onMounted(async () => {
 <style lang="scss">
 .container {
     @include container-base();
-    // @include flex-box(column);
-    // max-height: 100%;
-    // // gap: 0.5rem;
+    @include flex-box(column);
+    max-height: 100%;
+    // gap: 0.5rem;
 
-    // .nav-bar {
-    //     flex: auto;
-    //     width: 100%;
-    //     height: 5%;
-    //     box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
-    //     z-index: $z-top-absolute;
-    //     @include flex-box();
-    //     align-items: center;
-    //     padding-left: 1rem;
-    //     background-color: $background-color-light;
-    //     .brand {
-    //         font-size: 2rem;
-    //         font-weight: bold;
-    //         color: $primary-color;
-    //     }
-    //     .icon {
-    //         @include icon-style($icon-size-small);
-    //         background-color: transparent !important;
-    //         margin-right: 6px;
-    //         // &:hover {
-    //         //     fill: $secondary-color;
-    //         //     background-color: $background-color-dark;
-    //         // }
-    //     }
-    // }
+    .nav-bar {
+        flex: auto;
+        width: 100%;
+        height: 5%;
+        box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
+        z-index: $z-top-absolute;
+        @include flex-box();
+        align-items: center;
+        padding-left: 1rem;
+        background-color: $background-color-light;
+        .brand {
+            font-size: 2rem;
+            font-weight: bold;
+            color: $primary-color;
+        }
+        .icon {
+            @include icon-style($icon-size-small);
+            background-color: transparent !important;
+            margin-right: 6px;
+            // &:hover {
+            //     fill: $secondary-color;
+            //     background-color: $background-color-dark;
+            // }
+        }
+    }
+
     #svg-content {
         height: 100%;
     }
