@@ -225,6 +225,7 @@ const constructTreeData = async (data) => {
 
 watch(freezeId, async (newVal) => {
     if (exportMode.value && newVal !== -1) {
+        // loading animation begins
         let loading = null;
         let dots = 0;
         const maxDots = 3;
@@ -236,6 +237,16 @@ watch(freezeId, async (newVal) => {
             loading.setText(`${loadingText}${".".repeat(dots)}`);
             dots = (dots + 1) % (maxDots + 1); // 循环增加点数
         };
+
+        // 动态更新加载条的计时器
+        const updateProgressBar = () => {
+            progress = (progress + 10) % 110; // 进度值在0到100之间循环
+            const progressBar = document.getElementById("progress-bar");
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        };
+
         try {
             loading = ElLoading.service({
                 lock: true,
@@ -377,6 +388,18 @@ onMounted(() => {});
                     // background-color: $background-color-dark;
                     // fill: $;
                 }
+            }
+        }
+
+        .content-box {
+            height: 95%;
+            width: 100%;
+            display: flex;
+            .filter-box {
+                width: 32%;
+            }
+            .graph-box {
+                flex: auto;
             }
         }
     }

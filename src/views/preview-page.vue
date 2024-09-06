@@ -279,11 +279,25 @@ onMounted(async () => {
         width: 100%;
         display: flex;
 
-        .highlight {
-            background-color: yellow; /* 高亮效果 */
+        .summary-content {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: $primary-color;
+            letter-spacing: 0.1rem;
+            span {
+                float: left;
+                clear: left;
+                width: 100%; /* 可选项，确保每个 span 占据一整行 */
+                text-indent: 2em;
+                cursor: pointer;
+            }
+            .highlight {
+                background-color: yellow; /* 高亮效果 */
+            }
         }
     }
 }
+<<<<<<< HEAD
 
 .sentence {
     margin: 40px 0;
@@ -302,4 +316,6 @@ span {
     color: $primary-color;
     letter-spacing: 0.2rem;
 }
+=======
+>>>>>>> temp
 </style>
