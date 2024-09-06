@@ -297,25 +297,4 @@ onMounted(async () => {
         }
     }
 }
-<<<<<<< HEAD
-
-.sentence {
-    margin: 40px 0;
-    cursor: pointer;
-    /* font-size: 100px; */
-}
-span {
-    float: left;
-    clear: left;
-    width: 100%; /* 可选项，确保每个 span 占据一整行 */
-    text-indent: 2em;
-}
-.summary-content {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: $primary-color;
-    letter-spacing: 0.2rem;
-}
-=======
->>>>>>> temp
 </style>
