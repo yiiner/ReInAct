@@ -262,7 +262,7 @@ onMounted(async () => {
         }
         .icon {
             @include icon-style($icon-size-small);
-            background-color: transparent !important;
+
             margin-right: 6px;
             // &:hover {
             //     fill: $secondary-color;
@@ -278,6 +278,10 @@ onMounted(async () => {
         height: 95%;
         width: 100%;
         display: flex;
+
+        #svg-content {
+            height: 100%;
+        }
 
         .summary-content {
             font-size: 1.5rem;
