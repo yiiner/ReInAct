@@ -152,7 +152,7 @@ onMounted(async () => {
             tempSentence
                 .selectAll("span")
                 .on("mouseover", handleMouseOver)
-                .on("mouseout", handleMouseOut);
+                .on("mouseout", handleMouseOut); // delete
         });
     }
 

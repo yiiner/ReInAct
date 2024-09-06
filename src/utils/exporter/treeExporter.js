@@ -364,21 +364,21 @@ class PDFGraph {
                         const hoveredNode = d3.select(event.target);
 
                         const hoveredNodeId = hoveredNode.attr("id");
-                        console.log("hoveredNodeId: ", hoveredNodeId);
+                        // console.log("hoveredNodeId: ", hoveredNodeId);
 
                         toggleHover(hoveredNode, true);
 
-                        store.dispatch("hover/changeId", hoveredNodeId);
+                        store.dispatch("hoverSummary/changeId", hoveredNodeId);
                     })
                     .on("mouseleave", (event) => {
                         const hoveredNode = d3.select(event.target);
 
                         const hoveredNodeId = hoveredNode.attr("id");
-                        console.log("hoveredNodeId: ", hoveredNodeId);
+                        // console.log("hoveredNodeId: ", hoveredNodeId);
 
                         toggleHover(hoveredNode, false);
 
-                        store.dispatch("hover/changeId", null);
+                        store.dispatch("hoverSummary/changeId", null);
                     });
 
                 // select nodes which have question and relationship bar
@@ -534,7 +534,7 @@ class PDFGraph {
 
         svg.call(zoom);
 
-        function toggleHover(nodeG, state, duration = 200) {
+        function toggleHover(nodeG, state, duration = 100) {
             let transformStr = "";
             let scale = 1.1;
             if (state) {

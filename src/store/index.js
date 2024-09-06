@@ -8,6 +8,7 @@ import nodeMoverModule from "./modules/node_mover";
 import freezeModule from "./modules/freeze";
 import exportModule from "./modules/export";
 
+import hoverSummaryModule from "./modules/hover_summary";
 import changePageModule from "./modules/change";
 import passDataModule from "./modules/pass";
 // import treeDataModule from "./modules/tree";
@@ -23,6 +24,7 @@ const store = createStore({
         nodeMover: nodeMoverModule,
         freeze: freezeModule,
         export: exportModule,
+        hoverSummary: hoverSummaryModule,
         changePage: changePageModule,
         passData: passDataModule,
         // tree: treeDataModule,
