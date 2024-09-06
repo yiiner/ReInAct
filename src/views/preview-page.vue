@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="nav-bar">
-            <div class="brand">Preview SVG Container</div>
+            <div class="brand">Data Story Tree</div>
             <div style="flex-grow: 1"></div>
             <div>
                 <SvgIcon iconName="home" class="icon" @click="goBack"></SvgIcon>
@@ -13,9 +13,9 @@
                 <div id="svg-content"></div>
             </div>
             <div id="right-panel">
-                <h1>Summary</h1>
+                <h1 style="text-align: center">Summary</h1>
                 <div>
-                    <p id="summary"></p>
+                    <p id="summary" class="summary-content"></p>
                 </div>
             </div>
         </div>
@@ -279,15 +279,22 @@ onMounted(async () => {
         width: 100%;
         display: flex;
 
-        .highlight {
-            background-color: yellow; /* 高亮效果 */
+        .summary-content {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: $primary-color;
+            letter-spacing: 0.1rem;
+            span {
+                float: left;
+                clear: left;
+                width: 100%; /* 可选项，确保每个 span 占据一整行 */
+                text-indent: 2em;
+                cursor: pointer;
+            }
+            .highlight {
+                background-color: yellow; /* 高亮效果 */
+            }
         }
     }
-}
-
-.sentence {
-    margin: 40px 0;
-    cursor: pointer;
-    /* font-size: 100px; */
 }
 </style>

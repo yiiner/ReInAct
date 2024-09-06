@@ -8,7 +8,7 @@
         <transition>
             <div class="main" v-show="showPage">
                 <div class="nav-bar">
-                    <div class="brand">LLM Guided Table Exploration</div>
+                    <div class="brand">ReInActable</div>
                     <div style="flex-grow: 1"></div>
                     <div>
                         <SvgIcon
@@ -225,33 +225,80 @@ const constructTreeData = async (data) => {
 
 watch(freezeId, async (newVal) => {
     if (exportMode.value && newVal !== -1) {
-        const data = await store.dispatch("export/startExport", newVal);
+        // loading animation begins
+        let loading = null;
+        let dots = 0;
+        const maxDots = 3;
+        const loadingText = "Exporting The Data Story, Please Wait a Moment";
+        let progress = 0;
 
-        console.log("data before processing: ", data);
+        // 动态更新文本的计时器
+        const updateText = () => {
+            loading.setText(`${loadingText}${".".repeat(dots)}`);
+            dots = (dots + 1) % (maxDots + 1); // 循环增加点数
+        };
 
-        exportData.value = await constructTreeData(data); // mature data
+        // 动态更新加载条的计时器
+        const updateProgressBar = () => {
+            progress = (progress + 10) % 110; // 进度值在0到100之间循环
+            const progressBar = document.getElementById("progress-bar");
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        };
 
-        console.log("MainPage pathData: ", exportData.value);
+        try {
+            loading = ElLoading.service({
+                lock: true,
+                text: loadingText,
+                background: "rgba(0,0,0,0.8)",
+                spinner: `
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 100%; height: 10px; background-color: rgba(255, 255, 255, 0.2); border-radius: 5px; overflow: hidden;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background-color: #3b82f6; transition: width 0.4s;"></div>
+                        </div>
+                    </div>
+                `, // 仅包含加载条的加载动画
+            });
 
-        summaryData.value = await store.dispatch(
-            "passData/postPassData",
-            exportData.value
-        ); // wait
+            const textIntervalId = setInterval(updateText, 500); // 每500ms更新一次文本
+            const progressBarIntervalId = setInterval(updateProgressBar, 400); // 每400ms更新一次加载条
 
-        // const processedData = await constructTreeData(data);
+            const data = await store.dispatch("export/startExport", newVal);
 
-        // const result = await store.dispatch(
-        //     "passData/postPassData",
-        //     processedData
-        // );
+            console.log("data before processing: ", data);
 
-        // ! waiting for a time loading animation
+            exportData.value = await constructTreeData(data); // mature data
 
-        // router.push({ name: "preview" });
-        // exportDataReady.value = true;
-        // showPage.value = false;
-        store.commit("changePage/setExportDataReady", true);
-        store.commit("changePage/setShowPage", false);
+            console.log("MainPage pathData: ", exportData.value);
+
+            summaryData.value = await store.dispatch(
+                "passData/postPassData",
+                exportData.value
+            ); // wait
+
+            // const processedData = await constructTreeData(data);
+
+            // const result = await store.dispatch(
+            //     "passData/postPassData",
+            //     processedData
+            // );
+
+            // ! waiting for a time loading animation
+
+            // router.push({ name: "preview" });
+            // exportDataReady.value = true;
+            // showPage.value = false;
+            store.commit("changePage/setExportDataReady", true);
+            store.commit("changePage/setShowPage", false);
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            // 无论成功或失败，都关闭加载动画并清除计时器
+            if (loading) loading.close();
+            clearInterval(textIntervalId);
+            clearInterval(progressBarIntervalId);
+        }
     }
 });
 
@@ -341,6 +388,18 @@ onMounted(() => {});
                     // background-color: $background-color-dark;
                     // fill: $;
                 }
+            }
+        }
+
+        .content-box {
+            height: 95%;
+            width: 100%;
+            display: flex;
+            .filter-box {
+                width: 32%;
+            }
+            .graph-box {
+                flex: auto;
             }
         }
     }
