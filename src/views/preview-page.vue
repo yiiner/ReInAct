@@ -86,7 +86,7 @@ const goBack = () => {
 };
 
 // hover node related
-const hoverNodeId = computed(() => store.getters["hover/id"]);
+const hoverNodeId = computed(() => store.getters["hoverSummary/id"]);
 watch(hoverNodeId, (newVal, oldVal) => {
     const id = newVal || oldVal;
 
