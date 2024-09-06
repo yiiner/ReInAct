@@ -273,7 +273,7 @@ watch(freezeId, async (newVal) => {
             console.log("MainPage pathData: ", exportData.value);
 
             summaryData.value = await store.dispatch(
-                "passData/postPassData",
+                "postPassData",
                 exportData.value
             ); // wait
 
@@ -291,13 +291,14 @@ watch(freezeId, async (newVal) => {
             // showPage.value = false;
             store.commit("changePage/setExportDataReady", true);
             store.commit("changePage/setShowPage", false);
+
+            clearInterval(textIntervalId);
+            clearInterval(progressBarIntervalId);
         } catch (error) {
             console.error("Error:", error);
         } finally {
             // 无论成功或失败，都关闭加载动画并清除计时器
             if (loading) loading.close();
-            clearInterval(textIntervalId);
-            clearInterval(progressBarIntervalId);
         }
     }
 });

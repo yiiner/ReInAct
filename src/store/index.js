@@ -10,7 +10,7 @@ import exportModule from "./modules/export";
 
 import hoverSummaryModule from "./modules/hover_summary";
 import changePageModule from "./modules/change";
-import passDataModule from "./modules/pass";
+// import passDataModule from "./modules/pass";
 // import treeDataModule from "./modules/tree";
 // import graphDataModule from "./modules/graph";
 // import colDataModule from "./modules/col";
@@ -26,7 +26,7 @@ const store = createStore({
         export: exportModule,
         hoverSummary: hoverSummaryModule,
         changePage: changePageModule,
-        passData: passDataModule,
+        // passData: passDataModule,
         // tree: treeDataModule,
         // graph: graphDataModule,
         // col: colDataModule,
