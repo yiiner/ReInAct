@@ -8,7 +8,7 @@
         <transition>
             <div class="main" v-show="showPage">
                 <div class="nav-bar">
-                    <div class="brand">LLM Guided Table Exploration</div>
+                    <div class="brand">ReInActable</div>
                     <div style="flex-grow: 1"></div>
                     <div>
                         <SvgIcon
@@ -225,33 +225,69 @@ const constructTreeData = async (data) => {
 
 watch(freezeId, async (newVal) => {
     if (exportMode.value && newVal !== -1) {
-        const data = await store.dispatch("export/startExport", newVal);
+        let loading = null;
+        let dots = 0;
+        const maxDots = 3;
+        const loadingText = "Exporting The Data Story, Please Wait a Moment";
+        let progress = 0;
 
-        console.log("data before processing: ", data);
+        // 动态更新文本的计时器
+        const updateText = () => {
+            loading.setText(`${loadingText}${".".repeat(dots)}`);
+            dots = (dots + 1) % (maxDots + 1); // 循环增加点数
+        };
+        try {
+            loading = ElLoading.service({
+                lock: true,
+                text: loadingText,
+                background: "rgba(0,0,0,0.8)",
+                spinner: `
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 100%; height: 10px; background-color: rgba(255, 255, 255, 0.2); border-radius: 5px; overflow: hidden;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background-color: #3b82f6; transition: width 0.4s;"></div>
+                        </div>
+                    </div>
+                `, // 仅包含加载条的加载动画
+            });
 
-        exportData.value = await constructTreeData(data); // mature data
+            const textIntervalId = setInterval(updateText, 500); // 每500ms更新一次文本
+            const progressBarIntervalId = setInterval(updateProgressBar, 400); // 每400ms更新一次加载条
 
-        console.log("MainPage pathData: ", exportData.value);
+            const data = await store.dispatch("export/startExport", newVal);
 
-        summaryData.value = await store.dispatch(
-            "passData/postPassData",
-            exportData.value
-        ); // wait
+            console.log("data before processing: ", data);
 
-        // const processedData = await constructTreeData(data);
+            exportData.value = await constructTreeData(data); // mature data
 
-        // const result = await store.dispatch(
-        //     "passData/postPassData",
-        //     processedData
-        // );
+            console.log("MainPage pathData: ", exportData.value);
 
-        // ! waiting for a time loading animation
+            summaryData.value = await store.dispatch(
+                "passData/postPassData",
+                exportData.value
+            ); // wait
 
-        // router.push({ name: "preview" });
-        // exportDataReady.value = true;
-        // showPage.value = false;
-        store.commit("changePage/setExportDataReady", true);
-        store.commit("changePage/setShowPage", false);
+            // const processedData = await constructTreeData(data);
+
+            // const result = await store.dispatch(
+            //     "passData/postPassData",
+            //     processedData
+            // );
+
+            // ! waiting for a time loading animation
+
+            // router.push({ name: "preview" });
+            // exportDataReady.value = true;
+            // showPage.value = false;
+            store.commit("changePage/setExportDataReady", true);
+            store.commit("changePage/setShowPage", false);
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            // 无论成功或失败，都关闭加载动画并清除计时器
+            if (loading) loading.close();
+            clearInterval(textIntervalId);
+            clearInterval(progressBarIntervalId);
+        }
     }
 });
 
