@@ -67,32 +67,32 @@ export default {
                 });
                 console.log("passLinks: ", passLinks);
 
-                resolve({
-                    message: "Get summary successfully.",
-                }); // delete
+                // resolve({
+                //     message: "Get summary successfully.",
+                // }); // delete
 
-                // // post passed data and get summary
-                // getSummaryFromPassData({
-                //     nodes: passNodes,
-                //     edges: passLinks,
-                // })
-                //     .then((res) => {
-                //         const data = res.data;
-                //         console.log("From serve: ", res.data);
+                // post passed data and get summary
+                getSummaryFromPassData({
+                    nodes: passNodes,
+                    edges: passLinks,
+                })
+                    .then((res) => {
+                        const data = res.data;
+                        console.log("From serve: ", res.data);
 
-                //         const summary = data.summary;
+                        const summary = data.summary;
 
-                //         console.log("From summary: ", summary);
-                //         // context.commit("setSummary", summary);
+                        console.log("From summary: ", summary);
+                        // context.commit("setSummary", summary);
 
-                //         resolve({
-                //             summary: summary,
-                //             message: "Get summary successfully.",
-                //         });
-                //     })
-                //     .catch((error) => {
-                //         reject(error);
-                //     }); // recall
+                        resolve({
+                            summary: summary,
+                            message: "Get summary successfully.",
+                        });
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    }); // recall
             });
         },
     },
