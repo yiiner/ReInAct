@@ -120,7 +120,13 @@ onMounted(async () => {
         console.log("summaryData: ", props.summaryData); // recall
 
         const summaryContent = `${props.summaryData.summary}`;
-        const summarySentence = d3.select("#summary").html(summaryContent); // recall
+        const summaryContentFormat = summaryContent
+            .split(/\n\s*\n/g)
+            .map((block) => `<div class="indented">${block}</div>`)
+            .join("");
+        const summarySentence = d3
+            .select("#summary")
+            .html(summaryContentFormat); // recall
 
         // const tempContent = `<span class="14">The user's exploration journey began with an interest in understanding why PlayStation 4 (PS4) sales were so high and whether other companies also had dominant brands.</span> <span class="insight-node-2">The user discovered that the sale of PS4 dominates among all brands for Sony.</span> <span class="insight-edge-2-3">This dominance of PS4 sales sparked curiosity about the sales patterns of other companies, leading to further exploration.</span>
 
@@ -137,7 +143,13 @@ onMounted(async () => {
         // <span class="insight-node-19">The user's exploration of Microsoft's sales in Europe revealed a clear downward trend over the years from 2013 to 2020.</span> <span class="insight-node-20">This insight helped in understanding the long-term trend and how the specific patterns observed fit into the overall decline.</span> <span class="insight-node-21">The user also found that the sale of the year 2020 was an outlier, significantly lower than other years.</span> <span class="insight-node-22">Understanding the outlier nature of 2020 provided deeper insights into why the sales pattern deviated so drastically, which was crucial for identifying anomalies and their impact on overall sales trends.</span>
 
         // <span class="insight-node-23">In conclusion, the user's exploration journey through the insight tree revealed significant insights about the dominance of PS4 sales for Sony, the declining sales of Microsoft, and the correlation of sales trends between Sony and Microsoft.</span> <span class="insight-node-24">The user was able to understand the temporal and geographical distribution of sales, identify anomalies, and compare the performance of different companies.</span> <span class="insight-node-25">This exploration process highlighted the importance of understanding the various factors that can influence sales, such as market conditions, product launches, and competition.</span>`;
-        // const tempSentence = d3.select("#summary").html(tempContent); // delete
+
+        // const tempContentFormat = tempContent
+        //     .split(/\n\s*\n/g)
+        //     .map((block) => `<div class="indented">${block}</div>`)
+        //     .join("");
+
+        // const tempSentence = d3.select("#summary").html(tempContentFormat); // delete
 
         const svg = d3.select("#main-svg");
         console.log("svg:", svg);
@@ -150,6 +162,7 @@ onMounted(async () => {
                 .on("mouseout", handleMouseOut); // recall
 
             // tempSentence
+            //     .selectAll("indented")
             //     .selectAll("span")
             //     .on("mouseover", handleMouseOver)
             //     .on("mouseout", handleMouseOut); // delete
@@ -238,7 +251,11 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@include change-animation();
+</style>
+
+<style lang="scss" scoped>
 .container {
     @include container-base();
     @include flex-box(column);
@@ -248,9 +265,10 @@ onMounted(async () => {
     .nav-bar {
         flex: auto;
         width: 100%;
-        height: 5%;
+        // height: 5%;
         box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(0, 0, 0, 0.2);
         z-index: $z-top-absolute;
+        // position: absolute;
         @include flex-box();
         align-items: center;
         padding-left: 1rem;
@@ -262,8 +280,8 @@ onMounted(async () => {
         }
         .icon {
             @include icon-style($icon-size-small);
-
             margin-right: 6px;
+
             // &:hover {
             //     fill: $secondary-color;
             //     background-color: $background-color-dark;
@@ -271,33 +289,39 @@ onMounted(async () => {
         }
     }
 
-    #svg-content {
-        height: 100%;
-    }
     .content-box {
         height: 95%;
         width: 100%;
         display: flex;
 
         #svg-content {
-            height: 100%;
+            height: 95%;
         }
-
+    }
+}
+</style>
+<style lang="scss">
+.container {
+    .content-box {
         .summary-content {
             font-size: 1.5rem;
             font-weight: bold;
             color: $primary-color;
             letter-spacing: 0.1rem;
-            span {
-                float: left;
-                clear: left;
-                width: 100%; /* 可选项，确保每个 span 占据一整行 */
-                text-indent: 2em;
-                cursor: pointer;
+            float: left;
+            .indented {
+                text-indent: 2em; /* Adjust the indent as needed */
+                margin-bottom: 0.5em; /* Optional: Adds spacing between blocks */
+                line-height: 1.2em; /* adjust space between lines */
+                span {
+                    // width: 100%; /* 可选项，确保每个 span 占据一整行 */
+                    clear: left;
+                    cursor: pointer;
+                }
             }
-            .highlight {
-                background-color: yellow; /* 高亮效果 */
-            }
+        }
+        .highlight {
+            background-color: yellow; /* 高亮效果 */
         }
     }
 }

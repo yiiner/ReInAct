@@ -5,7 +5,7 @@
         element-loading-custom-class="main"
         element-loading-text="Computing..."
     >
-        <transition>
+        <transition name="change">
             <div class="main" v-show="showPage">
                 <div class="nav-bar">
                     <div class="brand">ReInActable</div>
@@ -59,7 +59,7 @@
             </div>
         </transition>
 
-        <transition>
+        <transition name="change">
             <div class="preview" v-show="!showPage">
                 <!-- <div class="nav-bar">
                     <div class="brand">Preview SVG Container</div>
@@ -358,7 +358,12 @@ onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
+@include change-animation();
+</style>
+
+<style lang="scss" scoped>
 .container {
+    @include container-base();
     .main {
         @include container-base();
         @include flex-box(column);
@@ -396,13 +401,21 @@ onMounted(() => {});
             height: 95%;
             width: 100%;
             display: flex;
+
             .filter-box {
                 width: 32%;
             }
+
             .graph-box {
                 flex: auto;
             }
         }
+    }
+
+    .preview {
+        @include container-base();
+        @include flex-box(column);
+        max-height: 100%;
     }
 }
 

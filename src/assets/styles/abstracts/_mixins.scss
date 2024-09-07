@@ -173,3 +173,14 @@
         visibility: visible;
     }
 }
+@mixin change-animation() {
+    .change-enter-active,
+    .change-leave-active {
+        transition: opacity 1s ease;
+    }
+
+    .change-enter-from,
+    .change-leave-to {
+        opacity: 0;
+    }
+}
