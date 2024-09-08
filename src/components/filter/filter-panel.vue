@@ -235,6 +235,7 @@ watch(currentPageNumber, (newVal, oldVal) => {
 
 // draw vl-graph based on new page data
 watch(currentPageData, (newVal, oldVal) => {
+    console.log("change vega page");
     nextTick(() => {
         vlContainers.value.forEach((containerRef, index) => {
             // attention: attribute is String type
@@ -243,6 +244,27 @@ watch(currentPageData, (newVal, oldVal) => {
             drawVl(d3.select(containerRef), data);
         });
     });
+});
+
+// draw vl-graph when return from summary to main-page // reasonableness is debatable
+const showPage = computed(() => {
+    return store.getters["changePage/showPage"];
+});
+
+watch(showPage, (newVal, oldVal) => {
+    if (newVal) {
+        console.log("does reDraw");
+        nextTick(() => {
+            vlContainers.value.forEach((containerRef, index) => {
+                // attention: attribute is String type
+                const realId = +containerRef.getAttribute("id");
+                const data = currentPageData.value.find(
+                    (item) => item["realId"] === realId
+                );
+                drawVl(d3.select(containerRef), data);
+            });
+        });
+    }
 });
 
 /* -------------------------------------------------------------------------- */
