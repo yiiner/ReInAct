@@ -321,7 +321,7 @@ onMounted(async () => {
             }
         }
         .highlight {
-            background-color: #1f78b4; /* 高亮效果 */
+            background-color: #a6cee3; /* 高亮效果 */
         }
     }
 }
